@@ -413,7 +413,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_target: {fileID: 1157153176}
-  m_distance: -10
+  m_distance: 6
+  m_offset: {x: 0, y: 0}
+  m_maxPitchValue: 70
+  m_yawMaxValue: 50
 --- !u!1 &1157153172
 GameObject:
   m_ObjectHideFlags: 0
