@@ -16,6 +16,9 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float m_minPitchValue = -10, m_maxPitchValue = 70;
     [SerializeField] private float m_yawMinValue = -50, m_yawMaxValue = 50;
 
+    [SerializeField] private bool m_enableCameraCollision;
+    [SerializeField] private LayerMask m_cameraLayerMask;
+
 
     private float m_yaw, m_pitch;
     private void LateUpdate()
@@ -37,33 +40,18 @@ public class CameraController : MonoBehaviour
 
     private void ThirdPersonCamera()
     {
-
         m_targetDistance = m_distance;
         //if (m_Player)
         //    m_targetDistance = m_Player.Aiming ? m_aimingDistance : m_normalDistance;
         m_distance = Mathf.Lerp(m_distance, m_targetDistance, Time.deltaTime * 5);
 
-        //if (_input)
-        //{
-        //    m_yaw += _input.look.x * m_sensitivity.x;
-        //    m_pitch += _input.look.y/*Input.GetAxis("Mouse Y")*/ * m_sensitivity.y;
-        //}
-
-
-        //if (b_useYawLimit)
-        //    m_yaw = ClampAngle(m_yaw, m_yawMinValue, m_yawMaxValue);
-
         float hor = -m_distance * Mathf.Cos(m_pitch * Mathf.Deg2Rad);
 
 
-        Vector3 t = (m_expectedPos - m_target.position).normalized;
-        //float ang = 90 - m_yaw;
-        //Vector3 dir = RotateVector(m_target.right, -ang).normalized;
+        Vector3 t = (m_expectedPos - m_target.position);
         Vector3 dir = RotateVector(t, 90).normalized;
 
         m_realOffset = dir * m_offset.x + Vector3.up * m_offset.y;
-
-        //Debug.LogWarning(m_realOffset);
 
         Vector3 pos = m_target.position + new Vector3(
             hor * Mathf.Sin(m_yaw * Mathf.Deg2Rad),
@@ -74,19 +62,17 @@ public class CameraController : MonoBehaviour
 
         m_expectedPos = pos;
 
-        //Vector3 direction = (pos - m_target.position).normalized;
+        Vector3 direction = (pos - m_target.position).normalized;
 
-        //Ray ray = new Ray((m_target.position + m_realOffset), direction);
+        Ray ray = new Ray((m_target.position + m_realOffset), direction);
 
         Vector3 finalTargetPosition;
-        //Quaternion finalTargetRotation = rot;
 
-        //if (Physics.Raycast(ray, out RaycastHit hit, m_distance, m_cameraCollisionLayer))
-        //{
-        //    finalTargetPosition = hit.point - direction * .3f;
-        //}
-        //else
-        finalTargetPosition = pos + m_realOffset;
+
+        if (m_enableCameraCollision && Physics.Raycast(ray, out RaycastHit hit, m_distance, m_cameraLayerMask))
+            finalTargetPosition = hit.point - direction * .3f;
+        else
+            finalTargetPosition = pos + m_realOffset;
 
         transform.SetPositionAndRotation(Vector3.Lerp(transform.position, finalTargetPosition, m_cameraLerpTime * Time.deltaTime),
             Quaternion.Lerp(transform.rotation, rot, m_cameraLerpTime * Time.deltaTime));
