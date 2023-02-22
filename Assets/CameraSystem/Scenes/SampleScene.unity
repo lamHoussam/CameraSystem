@@ -509,7 +509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f602d83edfce214f9c8271a9617979a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_target: {fileID: 1157153176}
+  m_Target: {fileID: 1157153176}
   m_distance: 6
   m_offset: {x: 0.8, y: 1}
   m_cameraLerpTime: 50
@@ -518,7 +518,7 @@ MonoBehaviour:
   m_yawMinValue: -180
   m_yawMaxValue: 180
   m_enableCameraCollision: 1
-  m_cameraLayerMask:
+  m_cameraCollisionLayer:
     serializedVersion: 2
     m_Bits: 1
 --- !u!1 &1157153172
