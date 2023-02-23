@@ -20,7 +20,7 @@ public class CameraSequence : MonoBehaviour
 
     private void Start()
     {
-        StartSequence();
+        //StartSequence();
     }
 
     public void StartSequence()
@@ -36,7 +36,10 @@ public class CameraSequence : MonoBehaviour
     }
 
 
-    private void Update()
+    public void StopSequence() => m_sequenceStarted = false; 
+
+
+    public void Update()
     {
         if (!m_sequenceStarted) 
             return;
@@ -58,7 +61,7 @@ public class CameraSequence : MonoBehaviour
         {
             m_currentCameraTargetIndex++;
             if (m_currentCameraTargetIndex >= m_CameraTargets.Length)
-                m_sequenceStarted = false;
+                StopSequence();
             else
                 direction = (m_CameraTargets[m_currentCameraTargetIndex].position - m_Camera.position).normalized;
             //t = 0;
