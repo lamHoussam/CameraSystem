@@ -21,11 +21,14 @@ namespace CameraSystem
         [SerializeField] private bool m_enableCameraCollision;
         [SerializeField] private LayerMask m_cameraCollisionLayer;
 
+        [SerializeField] private bool m_active;
+        public bool Active => m_active;
+
 
         private float m_yaw, m_pitch;
         private void LateUpdate()
         {
-            if (!m_Target) return;
+            if (!m_Target || !Active) return;
             SetPitchYaw();
             ThirdPersonCamera();
         }

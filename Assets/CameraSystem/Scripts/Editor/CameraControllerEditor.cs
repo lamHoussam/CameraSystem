@@ -14,6 +14,7 @@ namespace CameraSystem
         private SerializedProperty spOffset;
         private SerializedProperty spCameraLerpTime;
 
+        private SerializedProperty spActive;
 
         // Yaw Pitch extremes
         private SerializedProperty spMinPitchValue, spMaxPitchValue;
@@ -29,6 +30,8 @@ namespace CameraSystem
             spDistance = serializedObject.FindProperty("m_distance");
             spOffset = serializedObject.FindProperty("m_offset");
             spCameraLerpTime = serializedObject.FindProperty("m_cameraLerpTime");
+
+            spActive = serializedObject.FindProperty("m_active");
 
             spMinPitchValue = serializedObject.FindProperty("m_minPitchValue");
             spMaxPitchValue = serializedObject.FindProperty("m_maxPitchValue");
@@ -102,6 +105,7 @@ namespace CameraSystem
                 EditorGUILayout.EndVertical();
             }
 
+            EditorGUILayout.PropertyField(spActive);
 
             serializedObject.ApplyModifiedProperties();
         }
