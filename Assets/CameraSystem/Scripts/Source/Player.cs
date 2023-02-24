@@ -1,3 +1,4 @@
+using CameraSystem;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -5,11 +6,17 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float m_speed;
     [SerializeField] private float RotationSmoothTime;
+    [Space]
+    [SerializeField] private CameraSettings m_StandSettings;
+    [SerializeField] private CameraSettings m_CrouchSettings;
+
+    private bool m_crouched;
 
     private Camera m_Camera;
     private float m_targetRotation;
     private void Awake()
     {
+        m_crouched = false;
         m_Camera = Camera.main;
     }
 
@@ -36,6 +43,11 @@ public class Player : MonoBehaviour
             transform.position += m_speed * Time.deltaTime * targetDirection.normalized;
         }
 
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            m_crouched = !m_crouched;
+            m_Camera.GetComponent<CameraController>().SetCameraSettings(m_crouched ? m_CrouchSettings : m_StandSettings);
+        }
 
 
         // move the player
