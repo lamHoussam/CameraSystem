@@ -102,5 +102,12 @@ namespace CameraSystem
                 vec.x * sin + vec.z * cos
             );
         }
+
+        public void SetCameraSettings(CameraSettings settings)
+        {
+            m_offset = settings.Offset;
+            m_distance = settings.Distance;
+            m_cameraLerpTime = settings.CameraLerpTime;
+        }
     }
 }
