@@ -10,4 +10,7 @@ public class CameraSettings : ScriptableObject
 
     [SerializeField] private float m_distance;
     public float Distance => m_distance;
+
+    [SerializeField] private float m_cameraLerpTime;
+    public float CameraLerpTime => m_cameraLerpTime;
 }

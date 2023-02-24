@@ -46,7 +46,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C))
         {
             m_crouched = !m_crouched;
-            m_Camera.GetComponent<CameraController>().SetCameraSettings(m_crouched ? m_CrouchSettings : m_StandSettings);
+            m_Camera.GetComponent<CameraController>().BlendBetweenCameraSettings(m_crouched ? m_CrouchSettings : m_StandSettings);
         }
 
 
