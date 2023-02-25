@@ -25,7 +25,13 @@ namespace CameraSystem
         public bool Active => m_active;
 
         [SerializeField] private float m_transitionLerpTime;
+        [SerializeField] private AnimationCurve m_TransitionCurve;
+
         private bool m_isBlending;
+
+        private float m_blendDistanceVariation;
+        private Vector2 m_blendOffsetVariation;
+        private float t;
 
         private CameraSettings m_TargetSettings;
 
@@ -43,10 +49,17 @@ namespace CameraSystem
             if (!m_isBlending)
                 return;
 
-            m_distance = Mathf.Lerp(m_distance, m_TargetSettings.Distance, m_transitionLerpTime * Time.deltaTime);
-            m_offset = Vector2.Lerp(m_offset, m_TargetSettings.Offset, m_transitionLerpTime * Time.deltaTime);
+            t += Time.deltaTime;
 
-            if (m_distance == m_TargetSettings.Distance && m_offset == m_TargetSettings.Offset)
+            float variation = m_TransitionCurve.Evaluate(t) * Time.deltaTime * m_transitionLerpTime;
+
+            m_distance += variation * m_blendDistanceVariation;
+            m_offset += variation * m_blendOffsetVariation;
+
+            //m_distance = Mathf.Lerp(m_distance, m_TargetSettings.Distance, m_transitionLerpTime * Time.deltaTime);
+            //m_offset = Vector2.Lerp(m_offset, m_TargetSettings.Offset, m_transitionLerpTime * Time.deltaTime);
+
+            if (Mathf.Abs(m_TargetSettings.Distance - m_distance) < .1f && Vector2.Distance(m_offset, m_TargetSettings.Offset) < .1f)
                 SetCameraSettings(m_TargetSettings);
         }
 
@@ -134,6 +147,11 @@ namespace CameraSystem
             m_TargetSettings = settings;
 
             m_cameraLerpTime = settings.CameraLerpTime;
+
+            m_blendDistanceVariation = settings.Distance - m_distance;
+            m_blendOffsetVariation = settings.Offset - m_offset;
+
+            t = 0;
         }
 
         public void StopBlend()

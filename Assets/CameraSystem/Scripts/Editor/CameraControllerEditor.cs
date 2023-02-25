@@ -27,6 +27,7 @@ namespace CameraSystem
 
         // Blend
         private SerializedProperty spTransitionLerpTime;
+        private SerializedProperty spTransitionCurve;
 
         private void OnEnable()
         {
@@ -51,6 +52,7 @@ namespace CameraSystem
 
 
             spTransitionLerpTime = serializedObject.FindProperty("m_transitionLerpTime");
+            spTransitionCurve = serializedObject.FindProperty("m_TransitionCurve");
         }
 
         public override void OnInspectorGUI()
@@ -62,7 +64,7 @@ namespace CameraSystem
             EditorGUILayout.PropertyField(spTarget);
 
             // Values
-            EditorGUILayout.Space();
+            //EditorGUILayout.Space();
             EditorGUILayout.BeginVertical(GUI.skin.box);
             EditorGUILayout.LabelField("Values", EditorStyles.boldLabel);
 
@@ -77,7 +79,7 @@ namespace CameraSystem
 
 
             // Angles
-            EditorGUILayout.Space();
+            //EditorGUILayout.Space();
             EditorGUILayout.BeginVertical(GUI.skin.box);
             EditorGUILayout.LabelField("Angles", EditorStyles.boldLabel);
 
@@ -99,7 +101,7 @@ namespace CameraSystem
 
 
             // Collisions
-            EditorGUILayout.Space();
+            //EditorGUILayout.Space();
             EditorGUILayout.BeginVertical(GUI.skin.box);
 
             EditorGUILayout.LabelField("Collision", EditorStyles.boldLabel);
@@ -113,7 +115,7 @@ namespace CameraSystem
 
             EditorGUILayout.EndVertical();
 
-            EditorGUILayout.Space();
+            //EditorGUILayout.Space();
 
             // Blend
             EditorGUILayout.BeginVertical(GUI.skin.box);
@@ -122,6 +124,7 @@ namespace CameraSystem
             using (new EditorGUI.IndentLevelScope())
             {
                 EditorGUILayout.PropertyField(spTransitionLerpTime);
+                EditorGUILayout.PropertyField(spTransitionCurve);
             }
 
             EditorGUILayout.EndVertical();
