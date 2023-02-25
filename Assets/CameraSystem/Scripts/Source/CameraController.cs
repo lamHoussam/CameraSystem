@@ -10,6 +10,8 @@ namespace CameraSystem
         [SerializeField] private float m_distance;
         [SerializeField] private Vector2 m_offset;
 
+        [SerializeField] private string m_assetName, m_assetPath;
+
         [SerializeField] private float m_cameraLerpTime;
 
         private float m_targetDistance;

@@ -15,6 +15,8 @@ namespace CameraSystem
         private SerializedProperty spOffset;
         private SerializedProperty spCameraLerpTime;
 
+        private SerializedProperty spAssetName, spAssetPath;
+
         private SerializedProperty spActive;
 
         // Yaw Pitch extremes
@@ -35,6 +37,9 @@ namespace CameraSystem
             spDistance = serializedObject.FindProperty("m_distance");
             spOffset = serializedObject.FindProperty("m_offset");
             spCameraLerpTime = serializedObject.FindProperty("m_cameraLerpTime");
+
+            spAssetName = serializedObject.FindProperty("m_assetName");
+            spAssetPath = serializedObject.FindProperty("m_assetPath");
 
             spActive = serializedObject.FindProperty("m_active");
 
@@ -73,6 +78,15 @@ namespace CameraSystem
                 EditorGUILayout.PropertyField(spDistance);
                 EditorGUILayout.PropertyField(spOffset);
                 EditorGUILayout.PropertyField(spCameraLerpTime);
+
+                EditorGUILayout.LabelField("Camera Settings", EditorStyles.boldLabel);
+                using (new EditorGUI.IndentLevelScope())
+                {
+                    EditorGUILayout.PropertyField(spAssetName);
+                    EditorGUILayout.PropertyField(spAssetPath);
+                    if(GUILayout.Button("Generate Camera Settings"))
+                        GenerateCameraSettingsAsset();
+                }
             }
 
             EditorGUILayout.EndVertical();
@@ -130,6 +144,23 @@ namespace CameraSystem
             EditorGUILayout.EndVertical();
 
             serializedObject.ApplyModifiedProperties();
+        }
+
+        public void GenerateCameraSettingsAsset()
+        {
+            CameraSettings asset = ScriptableObject.CreateInstance<CameraSettings>();
+
+            asset.Distance = spDistance.floatValue;
+            asset.Offset = spOffset.vector2Value;
+            asset.CameraLerpTime = spCameraLerpTime.floatValue;
+
+            AssetDatabase.CreateAsset(asset, spAssetPath.stringValue + "/" + spAssetName.stringValue + ".asset");
+            AssetDatabase.SaveAssets();
+
+            EditorUtility.FocusProjectWindow();
+
+            Selection.activeObject = asset;
+
         }
     }
 }

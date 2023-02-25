@@ -543,6 +543,8 @@ MonoBehaviour:
   m_Target: {fileID: 1157153176}
   m_distance: 6
   m_offset: {x: 0.8, y: 1}
+  m_assetName: CameraSetting
+  m_assetPath: Assets/CameraSystem/CameraSettings
   m_cameraLerpTime: 20
   m_minPitchValue: -10
   m_maxPitchValue: 70
