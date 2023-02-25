@@ -77,7 +77,7 @@ namespace CameraSystem
                 m_yaw = ClampAngle(m_yaw, m_yawMinValue, m_yawMaxValue);
         }
 
-        private void ThirdPersonCamera()
+        public void ThirdPersonCamera()
         {
             m_targetDistance = m_distance;
             //if (m_Player)
