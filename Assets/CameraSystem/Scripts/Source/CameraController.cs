@@ -69,15 +69,20 @@ namespace CameraSystem
                 SetCameraSettings(m_TargetSettings);
         }
 
-        public void SetPitchYaw()
+
+        public void SetPitchYaw(Vector2 look)
         {
-            m_pitch += Input.GetAxis("Mouse Y");
-            m_yaw += Input.GetAxis("Mouse X");
+            m_pitch += look.y;
+            m_yaw += look.x;
 
             m_pitch = ClampAngle(m_pitch, m_minPitchValue, m_maxPitchValue);
             if (m_useYawLimit)
                 m_yaw = ClampAngle(m_yaw, m_yawMinValue, m_yawMaxValue);
         }
+
+        public void SetPitchYaw(float x, float y) => SetPitchYaw(new Vector2(x, y));
+        public void SetPitchYaw() => SetPitchYaw(Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"));
+        
 
         public void ThirdPersonCamera()
         {
