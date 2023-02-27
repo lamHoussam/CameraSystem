@@ -31,6 +31,8 @@ namespace CameraSystem
         [SerializeField] private float m_transitionLerpTime;
         [SerializeField] private AnimationCurve m_TransitionCurve;
 
+        [SerializeField] private CameraSettings m_CameraSettingsToLoad;
+
         private bool m_isBlending;
 
         private float m_blendDistanceVariation;
