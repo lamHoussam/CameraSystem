@@ -603,7 +603,7 @@ MonoBehaviour:
   - m_name: stand
     m_Setting: {fileID: 11400000, guid: ddb5991a72c7533418a8bf03d99db3a4, type: 2}
   - m_name: crouch
-    m_Setting: {fileID: 11400000, guid: 9aa74ec06d19e8c449abb81916eb6174, type: 2}
+    m_Setting: {fileID: 11400000, guid: 2413f1d3a45d0c644b7a0e0d9b851110, type: 2}
 --- !u!1 &1157153172
 GameObject:
   m_ObjectHideFlags: 0

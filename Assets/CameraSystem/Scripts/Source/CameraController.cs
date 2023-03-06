@@ -78,7 +78,13 @@ namespace CameraSystem
             m_distance += variation * m_blendDistanceVariation;
             m_offset += variation * m_blendOffsetVariation;
 
-            if(Mathf.Sign(m_blendDistanceVariation) != Mathf.Sign(m_TargetSettings.Distance - m_distance))
+            Vector3 currentOffsetVar = m_TargetSettings.Offset - m_offset;
+
+            if(
+                Mathf.Sign(m_blendDistanceVariation) != Mathf.Sign(m_TargetSettings.Distance - m_distance)
+                || Mathf.Sign(m_blendOffsetVariation.x) != Mathf.Sign(currentOffsetVar.x)
+                || Mathf.Sign(m_blendOffsetVariation.y) != Mathf.Sign(currentOffsetVar.y)
+            )
                 SetCameraSettings(m_TargetSettings);
 
         }
