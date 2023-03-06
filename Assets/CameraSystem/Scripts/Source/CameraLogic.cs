@@ -27,10 +27,15 @@ namespace CameraSystem
 
         private CameraController m_CameraController;
 
+        private string m_currentState;
+        public string CurrentState;
+
         private void Awake()
         {
             m_CameraController = GetComponent<CameraController>();
             Setup();
+
+            SwitchCameraSetting(m_triggerEvents.Length == 0 ? "" : m_triggerEvents[0].Name);
         }
 
         private void Setup()
@@ -51,6 +56,7 @@ namespace CameraSystem
 
             Debug.Log(settings);
             m_CameraController.BlendBetweenCameraSettings(settings);
+            m_currentState = name;
         }
     }
 }
