@@ -8,9 +8,8 @@ namespace CameraSystem
     {
         public enum CameraType
         {
-            ThirdPersonLook,
-            ThirdPersonFollow,
-            ThirdPersonLookFollow,
+            Controllable, 
+            NonControllable,
         }
 
 
@@ -60,7 +59,7 @@ namespace CameraSystem
         private void LateUpdate()
         {
             if (!m_Target || !Active) return;
-            if(m_CameraType != CameraType.ThirdPersonFollow)
+            if(m_CameraType == CameraType.Controllable)
                 SetPitchYaw();
 
             ThirdPersonCamera();
@@ -97,7 +96,7 @@ namespace CameraSystem
         }
 
         public void SetPitchYaw(float x, float y) => SetPitchYaw(new Vector2(x, y));
-        public void SetPitchYaw() => SetPitchYaw(Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"));
+        public void SetPitchYaw() => SetPitchYaw(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         
 
         public void ThirdPersonCamera()
