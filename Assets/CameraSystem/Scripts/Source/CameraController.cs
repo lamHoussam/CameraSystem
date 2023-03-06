@@ -119,7 +119,7 @@ namespace CameraSystem
                 hor * Mathf.Sin(m_yaw * Mathf.Deg2Rad),
                 m_distance * Mathf.Sin(m_pitch * Mathf.Deg2Rad),
                 hor * Mathf.Cos(m_yaw * Mathf.Deg2Rad)
-            );
+            );  
             Quaternion rot = Quaternion.Euler(/*(Vector3)m_offset + */Vector3.up * m_yaw + Vector3.right * m_pitch);
 
             m_expectedPos = pos;
