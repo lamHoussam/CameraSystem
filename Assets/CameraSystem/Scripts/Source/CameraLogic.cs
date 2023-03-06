@@ -28,7 +28,7 @@ namespace CameraSystem
         private CameraController m_CameraController;
 
         private string m_currentState;
-        public string CurrentState;
+        public string CurrentState => m_currentState;
 
         private void Awake()
         {
