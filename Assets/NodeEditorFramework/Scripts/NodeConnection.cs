@@ -4,24 +4,45 @@ using UnityEngine;
 
 namespace NodeEditorFramework
 {
+    [System.Serializable]
     public class NodeConnection : ScriptableObject
     {
-        private Node m_From, m_To;
+        [SerializeField] private Node m_From, m_To;
         public Node From => m_From;
         public Node To => m_To;
 
-        private List<ConnectionCondition> m_Conditions;
+        [SerializeField] private List<ConnectionCondition> m_Conditions;
+        public int ConditionsCount => m_Conditions == null ? 0 : m_Conditions.Count;
+        public ConnectionCondition GetCondition(int i) => m_Conditions[i];
+
+
 
         public void SetNodeConnectionPoints(Node from, Node to)
         {
             m_From = from;
             m_To = to;
+
+            if (!System.String.IsNullOrEmpty(AssetDatabase.GetAssetPath(NodeEditor.Instance.LoadedNodeCanvas)))
+            {
+                AssetDatabase.AddObjectToAsset(this, NodeEditor.Instance.LoadedNodeCanvas);
+
+                if (m_Conditions != null)
+                {
+                    for (int i = 0; i < m_Conditions.Count; i++)
+                        AssetDatabase.AddObjectToAsset(m_Conditions[i], this);
+                }
+
+                AssetDatabase.Refresh();
+            }
+
         }
+
 
         public void Draw()
         {
-            //Handles.Draw
-            //Handles.color = Color.blue;
+            if (m_From == null || m_To == null)
+                return;
+
             Handles.DrawBezier(
                 m_From.Center,
                 m_To.Center,
@@ -72,7 +93,7 @@ namespace NodeEditorFramework
         public bool EvaluateConditions()
         {
             if (m_Conditions == null)
-                return false;
+                return true;
 
             for(int i = 0; i < m_Conditions.Count; i++)
                 if (!m_Conditions[i].Evaluate()) 
@@ -85,6 +106,7 @@ namespace NodeEditorFramework
         {
             m_Conditions?.Clear();
             m_From.RemoveConnection(this);
-        }
+        }       
+
     }
 }
