@@ -90,6 +90,10 @@ namespace CameraSystem
         }
 
 
+        /// <summary>
+        /// Change camera's pitch and yaw 
+        /// </summary>
+        /// <param name="look">Pitch, Yaw values to add </param>
         public void SetPitchYaw(Vector2 look)
         {
             m_pitch += Time.deltaTime * look.y * m_sensitivity.y;
@@ -103,7 +107,9 @@ namespace CameraSystem
         public void SetPitchYaw(float x, float y) => SetPitchYaw(new Vector2(x, y));
         public void SetPitchYaw() => SetPitchYaw(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         
-
+        /// <summary>
+        /// Third Person Camera
+        /// </summary>
         public void ThirdPersonCamera()
         {
             m_targetDistance = m_distance;
@@ -146,6 +152,8 @@ namespace CameraSystem
 
         }
 
+
+
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {
             if (lfAngle < -360f) lfAngle += 360f;
@@ -153,6 +161,12 @@ namespace CameraSystem
             return Mathf.Clamp(lfAngle, lfMin, lfMax);
         }
 
+        /// <summary>
+        /// Rotate vector vec angle degrees
+        /// </summary>
+        /// <param name="vec">Vector to rotate</param>
+        /// <param name="angle">Angle in degrees</param>
+        /// <returns>Rotation result</returns>
         public static Vector3 RotateVector(Vector3 vec, float angle)
         {
             float cos = Mathf.Cos(angle * Mathf.Deg2Rad);
@@ -165,6 +179,10 @@ namespace CameraSystem
             );
         }
 
+        /// <summary>
+        /// Set Camera new settings
+        /// </summary>
+        /// <param name="settings"></param>
         public void SetCameraSettings(CameraSettings settings)
         {
             m_offset = settings.Offset;
@@ -174,6 +192,10 @@ namespace CameraSystem
             StopBlend();
         }
 
+        /// <summary>
+        /// Initiate Camera blend to new settings
+        /// </summary>
+        /// <param name="settings"></param>
         public void BlendBetweenCameraSettings(CameraSettings settings)
         {
             m_isBlending = true;
@@ -187,6 +209,9 @@ namespace CameraSystem
             t = 0;
         }
 
+        /// <summary>
+        /// Stop Camera blend
+        /// </summary>
         public void StopBlend()
         {
             m_isBlending = false;
