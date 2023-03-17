@@ -23,14 +23,41 @@ namespace NodeEditorFramework
         protected bool m_isDragged;
         protected bool m_isEvaluationResult;
 
+        public virtual bool Removable => true;
+
+        /// <summary>
+        /// Get Next node with true connection conditions
+        /// </summary>
+        /// <returns></returns>
+        public Node GetNextNode()
+        {
+
+            if (m_Connections == null)
+                return null;
+
+            for(int i = 0; i < m_Connections.Count; i++)
+                if (m_Connections[i].EvaluateConditions())
+                    return m_Connections[i].To;
+
+            return null;
+        }
+#if UNITY_EDITOR
+        /// <summary>
+        /// Draw Node to editor window
+        /// </summary>
+        /// <param name="scale"></param>
         public virtual void Draw(float scale = 1)
         {
             m_Rect.size = m_InitialRect.size * scale;
         }
 
+        /// <summary>
+        /// Called on remove node
+        /// </summary>
         public virtual void OnRemove()
         {
         }
+
 
         public virtual void OnDrag(Vector2 delta)
         {
@@ -100,22 +127,35 @@ namespace NodeEditorFramework
         {
             GenericMenu genericMenu = new GenericMenu();
             genericMenu.AddItem(new GUIContent("Make Connection"), false, () => OnClickMakeConnection());
-            genericMenu.AddItem(new GUIContent("Remove Node"), false, () => NodeEditor.Instance.OnClickRemoveNode(this));
+
+            if (Removable)
+                genericMenu.AddItem(new GUIContent("Remove Node"), false, () => NodeEditor.Instance.OnClickRemoveNode(this));
+
             genericMenu.ShowAsContext();
 
         }
+
 
         public void OnClickMakeConnection()
         {
             NodeEditor.Instance.OnClickFirstNodeForConnection(this);
         }
 
+
+        /// <summary>
+        /// Add Connection to node's connection list
+        /// </summary>
+        /// <param name="connection">connection to add</param>
         public void AddConnection(NodeConnection connection)
         {
             m_Connections ??= new List<NodeConnection>();
             m_Connections.Add(connection);
         }
 
+        /// <summary>
+        /// Remove Connection from node's connection list
+        /// </summary>
+        /// <param name="connection">connection to remove</param>
         public void RemoveConnection(NodeConnection connection)
         {
             m_Connections?.Remove(connection);
@@ -138,22 +178,10 @@ namespace NodeEditorFramework
             }
         }
 
-        public Node GetNextNode()
-        {
-
-            if (m_Connections == null)
-                return null;
-
-            for(int i = 0; i < m_Connections.Count; i++)
-                if (m_Connections[i].EvaluateConditions())
-                    return m_Connections[i].To;
-
-            return null;
-        }
-
         public void SetEvaluationResult(bool evaluationResult = true)
         {
             m_isEvaluationResult = evaluationResult;
         }
+#endif
     }
 }

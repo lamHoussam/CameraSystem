@@ -7,6 +7,8 @@ namespace NodeEditorFramework
 {
     public class EntryNode : Node
     {
+#if UNITY_EDITOR
+        public override bool Removable => false;
         public static EntryNode Create(Rect rect)
         {
             EntryNode node = CreateInstance<EntryNode>();
@@ -18,8 +20,6 @@ namespace NodeEditorFramework
             return node;
         }
 
-
-
         public override void Draw(float scale = 1)
         {
             base.Draw(scale);
@@ -29,5 +29,6 @@ namespace NodeEditorFramework
             GUILayout.EndArea();
 
         }
+#endif
     }
 }

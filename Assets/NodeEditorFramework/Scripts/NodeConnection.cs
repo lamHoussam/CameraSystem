@@ -15,8 +15,31 @@ namespace NodeEditorFramework
         public int ConditionsCount => m_Conditions == null ? 0 : m_Conditions.Count;
         public ConnectionCondition GetCondition(int i) => m_Conditions[i];
 
+        private bool m_isSelected;
 
+        /// <summary>
+        /// Evaluate all conditions in condition's list
+        /// </summary>
+        /// <returns>True if all conditions evaluate to true False else</returns>
+        public bool EvaluateConditions()
+        {
+            if (m_Conditions == null)
+                return true;
 
+            for(int i = 0; i < m_Conditions.Count; i++)
+                if (!m_Conditions[i].Evaluate()) 
+                    return false;
+
+            return true;
+        }
+
+#if UNITY_EDITOR
+
+        /// <summary>
+        /// Set nodes connected to this
+        /// </summary>
+        /// <param name="from">Starting node</param>
+        /// <param name="to">Target node</param>
         public void SetNodeConnectionPoints(Node from, Node to)
         {
             m_From = from;
@@ -37,23 +60,49 @@ namespace NodeEditorFramework
 
         }
 
+        public void Select()
+        {
+            m_isSelected = true;
+        }
 
+        public void Deselect()
+        {
+            m_isSelected = false;
+        }
+
+        /// <summary>
+        /// Draw node connection to Node editor
+        /// </summary>
         public void Draw()
         {
             if (m_From == null || m_To == null)
                 return;
 
+            Color cnxColor;
+
+            if (m_isSelected)
+                cnxColor = new Color(.1f, .5f, .8f);
+            else
+            {
+                Color col = NodeEditor.Instance.m_trueColor;
+                Color trueCol = new Color(col.r, col.g, col.b);
+                col = NodeEditor.Instance.m_falseColor;
+                Color falseCol = new Color(col.r, col.g, col.b);
+
+                cnxColor = EvaluateConditions() ? trueCol : falseCol;
+            }
+
             Handles.DrawBezier(
                 m_From.Center,
                 m_To.Center,
-                m_From.Center + Vector2.left * 50f,
-                m_To.Center - Vector2.left * 50f,
-                EvaluateConditions() ? new Color(0, .5f, .8f) : Color.white,
+                m_From.Center - Vector2.left * 50f,
+                m_To.Center + Vector2.left * 50f,
+                cnxColor,
                 null,
                 2f
             );
 
-            if (Handles.Button(m_To.Center, Quaternion.identity, 4, 8, Handles.CircleHandleCap))
+            if (Handles.Button((Vector3)m_To.Center - Vector3.forward * 5, Quaternion.LookRotation(Vector3.right), 12, 8, Handles.ConeHandleCap))
                 Debug.Log("Houssam");
 
             if (Handles.Button((m_From.Center + m_To.Center) * 0.5f, Quaternion.identity, 4, 8, Handles.RectangleHandleCap))
@@ -61,12 +110,15 @@ namespace NodeEditorFramework
         }
 
 
+        /// <summary>
+        /// Display conditions to Node editor
+        /// </summary>
         public void DisplayConditions()
         {
             if (GUILayout.Button("Remove Node Connection"))
                 NodeEditor.Instance.OnClickRemoveNodeConnection(this);
 
-            GUILayout.Label(new GUIContent("Condition"), NodeEditor.Instance.m_NodeLabelBold);
+            GUILayout.Label(new GUIContent("Conditions"), NodeEditor.Instance.m_NodeLabelBold);
             if (GUILayout.Button("New Condition"))
                 NodeEditor.Instance.OnClickAddCondition(this);
 
@@ -76,12 +128,20 @@ namespace NodeEditorFramework
                     m_Conditions[i].Display();
         }
 
+        /// <summary>
+        /// Add condition 
+        /// </summary>
+        /// <param name="cndition">Condition to add</param>
         public void AddCondition(ConnectionCondition cndition)
         {
             m_Conditions ??= new List<ConnectionCondition>();
             m_Conditions.Add(cndition);
         }
 
+        /// <summary>
+        /// Remove confition
+        /// </summary>
+        /// <param name="cndition">Condition to remove</param>
         public void RemoveCondition(ConnectionCondition cndition)
         {
             if (m_Conditions == null)
@@ -90,23 +150,15 @@ namespace NodeEditorFramework
             m_Conditions.Remove(cndition);
         }
 
-        public bool EvaluateConditions()
-        {
-            if (m_Conditions == null)
-                return true;
-
-            for(int i = 0; i < m_Conditions.Count; i++)
-                if (!m_Conditions[i].Evaluate()) 
-                    return false;
-
-            return true;
-        }
-
+        /// <summary>
+        /// Called on remove node connection
+        /// </summary>
         public void OnRemove()
         {
             m_Conditions?.Clear();
             m_From.RemoveConnection(this);
-        }       
+        }
+#endif
 
     }
 }
