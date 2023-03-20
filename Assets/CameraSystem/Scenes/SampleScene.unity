@@ -521,8 +521,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: -0.010470025, y: 0.018323926, z: 0.00019189471, w: 0.99977726}
-  m_LocalPosition: {x: -1.2442368, y: 1.4114136, z: 9.11371}
+  m_LocalRotation: {x: 0.010440991, y: 0.07662782, z: 0.000802474, w: -0.9970048}
+  m_LocalPosition: {x: -0.43093932, y: 1.4114136, z: 8.954031}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -549,6 +549,7 @@ MonoBehaviour:
   m_cameraLerpTime: 50
   m_sensitivity: {x: 100, y: 100}
   m_useYawLimit: 0
+  m_usePitchLimit: 1
   m_minPitchValue: -10
   m_maxPitchValue: 70
   m_yawMinValue: -180
@@ -593,9 +594,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   m_CameraSettingsToLoad: {fileID: 11400000, guid: ddb5991a72c7533418a8bf03d99db3a4, type: 2}
-  m_CameraType: 1
+  m_CameraType: 0
   m_TargetLockOn: {fileID: 865817251}
-  m_yaw: 2.1
+  m_yaw: -8.79
   m_pitch: -1.2
 --- !u!114 &963194230
 MonoBehaviour:

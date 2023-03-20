@@ -30,7 +30,7 @@ namespace CameraSystem
         // Yaw, Pitch extremes
         private SerializedProperty spMinPitchValue, spMaxPitchValue;
         private SerializedProperty spMinYawValue, spMaxYawValue;
-        private SerializedProperty spUseYawLimit;
+        private SerializedProperty spUseYawLimit, spUsePitchLimit;
 
         // Collision
         private SerializedProperty spEnableCameraCollision;
@@ -65,7 +65,9 @@ namespace CameraSystem
 
             spMinPitchValue = serializedObject.FindProperty("m_minPitchValue");
             spMaxPitchValue = serializedObject.FindProperty("m_maxPitchValue");
+
             spUseYawLimit = serializedObject.FindProperty("m_useYawLimit");
+            spUsePitchLimit = serializedObject.FindProperty("m_usePitchLimit");
 
             spMinYawValue = serializedObject.FindProperty("m_yawMinValue");
             spMaxYawValue = serializedObject.FindProperty("m_yawMaxValue");
@@ -135,10 +137,15 @@ namespace CameraSystem
             using (new EditorGUI.IndentLevelScope())
             {
 
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.PropertyField(spMinYawValue);
-                EditorGUILayout.PropertyField(spMaxYawValue);
-                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.PropertyField(spUsePitchLimit);
+                if (spUsePitchLimit.boolValue)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.PropertyField(spMinYawValue);
+                    EditorGUILayout.PropertyField(spMaxYawValue);
+                    EditorGUILayout.EndHorizontal();
+                }
+
 
                 EditorGUILayout.PropertyField(spUseYawLimit);
                 if (spUseYawLimit.boolValue)
@@ -183,7 +190,7 @@ namespace CameraSystem
             EditorGUILayout.EndVertical();
 
             if (!Application.isPlaying)
-                m_CameraController.ThirdPersonCamera();
+                m_CameraController.LateUpdate();
 
             EditorGUILayout.Space();
             EditorGUILayout.PropertyField(spCameraType);
@@ -193,6 +200,13 @@ namespace CameraSystem
 
             EditorGUILayout.Space();
             EditorGUILayout.PropertyField(spCameraLockTarget);
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("LockOn"))
+                m_CameraController.ActivateLockOn(spCameraLockTarget.objectReferenceValue as Transform);
+            if (GUILayout.Button("Remove LockOn"))
+                m_CameraController.DeactivateLockOn();
+            EditorGUILayout.EndHorizontal();
 
             serializedObject.ApplyModifiedProperties();
         }

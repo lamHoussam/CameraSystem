@@ -27,7 +27,7 @@ namespace CameraSystem
         private float m_targetDistance;
         private Vector3 m_expectedPos, m_realOffset;
 
-        [SerializeField] private bool m_useYawLimit;
+        [SerializeField] private bool m_useYawLimit, m_usePitchLimit;
         [SerializeField] private float m_minPitchValue = -10, m_maxPitchValue = 70;
         [SerializeField] private float m_yawMinValue = -50, m_yawMaxValue = 50;
 
@@ -71,7 +71,7 @@ namespace CameraSystem
             ActivateLockOn(m_TargetLockOn);
         }
 
-        private void LateUpdate()
+        public void LateUpdate()
         {
             if (!m_Target || !Active) return;
             if(m_CameraType == CameraType.Controllable)
