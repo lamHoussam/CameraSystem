@@ -37,7 +37,7 @@ namespace CameraSystem
         [SerializeField] private bool m_active;
         public bool Active => m_active;
 
-        [SerializeField] private float m_transitionLerpTime;
+        [SerializeField] private float m_transitionTime;
         [SerializeField] private AnimationCurve m_TransitionCurve;
 
         [SerializeField] private CameraSettings m_CameraSettingsToLoad;
@@ -55,7 +55,15 @@ namespace CameraSystem
 
         [SerializeField] private float m_yaw, m_pitch;
 
-        private float m_distVar;
+        //private float m_distVar;
+        private float m_previousDistance;
+        private Vector2 m_previousOffset;
+
+        private void Awake()
+        {
+            m_previousDistance = m_distance;
+            m_previousOffset = m_offset;
+        }
 
         private void LateUpdate()
         {
@@ -68,25 +76,8 @@ namespace CameraSystem
 
         private void Update()
         {
-            if (!m_isBlending)
-                return;
-
-            t += Time.deltaTime;
-
-            float variation = m_TransitionCurve.Evaluate(t) * Time.deltaTime * m_transitionLerpTime;
-
-            m_distance += variation * m_blendDistanceVariation;
-            m_offset += variation * m_blendOffsetVariation;
-
-            Vector3 currentOffsetVar = m_TargetSettings.Offset - m_offset;
-
-            if(
-                Mathf.Sign(m_blendDistanceVariation) != Mathf.Sign(m_TargetSettings.Distance - m_distance)
-                || Mathf.Sign(m_blendOffsetVariation.x) != Mathf.Sign(currentOffsetVar.x)
-                || Mathf.Sign(m_blendOffsetVariation.y) != Mathf.Sign(currentOffsetVar.y)
-            )
-                SetCameraSettings(m_TargetSettings);
-
+            if (m_isBlending)
+                Blend();
         }
 
 
@@ -206,7 +197,25 @@ namespace CameraSystem
             m_blendDistanceVariation = settings.Distance - m_distance;
             m_blendOffsetVariation = settings.Offset - m_offset;
 
+            m_previousDistance = m_distance;
+            m_previousOffset = m_offset;
+
             t = 0;
+        }
+
+        private void Blend()
+        {
+            t += Time.deltaTime;
+
+            float val = m_TransitionCurve.Evaluate(t / m_transitionTime);
+
+            m_distance = val * m_blendDistanceVariation + m_previousDistance;
+            m_offset = val * m_blendOffsetVariation + m_previousOffset;
+
+            Debug.LogWarning("Value : " + val);
+
+            if (t >= m_transitionTime)
+                SetCameraSettings(m_TargetSettings);
         }
 
         /// <summary>

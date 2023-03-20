@@ -558,24 +558,33 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_active: 1
-  m_transitionLerpTime: 4
+  m_transitionTime: 0.6
   m_TransitionCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 8.180965
-      outSlope: 8.180965
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.0125
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.74121386
+      value: 0.24221963
+      inSlope: 1.1108549
+      outSlope: 1.1108549
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -584,7 +593,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   m_CameraSettingsToLoad: {fileID: 11400000, guid: ddb5991a72c7533418a8bf03d99db3a4, type: 2}
-  m_CameraType: 0
+  m_CameraType: 1
   m_yaw: 2.1
   m_pitch: -1.2
 --- !u!114 &963194230

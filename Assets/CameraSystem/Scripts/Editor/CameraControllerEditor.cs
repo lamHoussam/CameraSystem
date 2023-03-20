@@ -37,7 +37,7 @@ namespace CameraSystem
         private SerializedProperty spCameraCollisionLayer;
 
         // Blend
-        private SerializedProperty spTransitionLerpTime;
+        private SerializedProperty spTransitionTime;
         private SerializedProperty spTransitionCurve;
 
         private CameraController m_CameraController;
@@ -75,7 +75,7 @@ namespace CameraSystem
             spCameraCollisionLayer = serializedObject.FindProperty("m_cameraCollisionLayer");
 
 
-            spTransitionLerpTime = serializedObject.FindProperty("m_transitionLerpTime");
+            spTransitionTime = serializedObject.FindProperty("m_transitionTime");
             spTransitionCurve = serializedObject.FindProperty("m_TransitionCurve");
 
             spYaw = serializedObject.FindProperty("m_yaw");
@@ -172,7 +172,7 @@ namespace CameraSystem
             EditorGUILayout.LabelField("Blend", EditorStyles.boldLabel);
             using (new EditorGUI.IndentLevelScope())
             {
-                EditorGUILayout.PropertyField(spTransitionLerpTime);
+                EditorGUILayout.PropertyField(spTransitionTime);
                 EditorGUILayout.PropertyField(spTransitionCurve);
             }
 

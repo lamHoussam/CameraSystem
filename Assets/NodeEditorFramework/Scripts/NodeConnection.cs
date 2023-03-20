@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Data.Common;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,6 +17,8 @@ namespace NodeEditorFramework
         public ConnectionCondition GetCondition(int i) => m_Conditions[i];
 
         private bool m_isSelected;
+
+        private Vector2 m_scrollPosition;
 
         /// <summary>
         /// Evaluate all conditions in condition's list
@@ -119,6 +122,9 @@ namespace NodeEditorFramework
                 NodeEditor.Instance.OnClickRemoveNodeConnection(this);
 
             GUILayout.Label(new GUIContent("Conditions"), NodeEditor.Instance.m_NodeLabelBold);
+
+            GUILayout.BeginVertical();
+            m_scrollPosition = GUILayout.BeginScrollView(m_scrollPosition, false, true);
             if (GUILayout.Button("New Condition"))
                 NodeEditor.Instance.OnClickAddCondition(this);
 
@@ -126,6 +132,9 @@ namespace NodeEditorFramework
             if (m_Conditions != null)
                 for (int i = 0; i < m_Conditions.Count; i++)
                     m_Conditions[i].Display();
+
+            GUILayout.EndScrollView();
+            GUILayout.EndVertical();
         }
 
         /// <summary>
@@ -136,6 +145,14 @@ namespace NodeEditorFramework
         {
             m_Conditions ??= new List<ConnectionCondition>();
             m_Conditions.Add(cndition);
+
+
+            if (!System.String.IsNullOrEmpty(AssetDatabase.GetAssetPath(this)))
+            {
+                AssetDatabase.AddObjectToAsset(cndition, this);
+                AssetDatabase.Refresh();
+            }
+
         }
 
         /// <summary>

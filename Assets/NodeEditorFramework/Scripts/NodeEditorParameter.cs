@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -133,7 +135,11 @@ namespace NodeEditorFramework
         /// <returns></returns>
         public bool CheckCanUseName(string newName)
         {
-            return !NodeEditor.Instance.LoadedNodeCanvas.ContainsParameter(newName);
+            if (NodeEditor.Instance.LoadedNodeCanvas.ContainsParameter(newName))
+                return false;
+
+            Regex regex = new Regex(@"^[a-zA-Z_]\w*$"); // regex pattern for valid parameter name
+            return regex.IsMatch(newName);
         }
 
 
@@ -146,7 +152,9 @@ namespace NodeEditorFramework
         {
             //GUILayout.BeginArea(NodeEditor.Instance.m_NodeBox);
 
-            GUILayout.BeginHorizontal(GUI.skin.box);
+            GUILayout.BeginVertical(GUI.skin.box);
+
+            GUILayout.BeginHorizontal();
             string newName = GUILayout.TextField(Name);
             if (CheckCanUseName(newName))
                 m_ParamName = newName;
@@ -175,7 +183,17 @@ namespace NodeEditorFramework
 
             GUILayout.EndHorizontal();
 
+            if (GUILayout.Button("Remove Parameter"))
+                NodeEditor.Instance.OnClickRemoveParameter(this);
+
+            GUILayout.EndVertical();
+
             //GUILayout.EndArea();
+        }
+
+        public void OnRemove()
+        {
+
         }
 #endif
     }

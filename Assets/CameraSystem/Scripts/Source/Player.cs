@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
     public void InitCameraSettings()
     {
         m_CameraLogic.SetBool("crouch", false, false);
-        m_CameraLogic.SetBool("aim", false, false);
+        //m_CameraLogic.SetBool("aim", false, false);
         m_CameraLogic.SetBool("rightShoulder", false);
     }
 

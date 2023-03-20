@@ -302,6 +302,11 @@ namespace NodeEditorFramework
             m_LoadedNodeCanvas.DisplayParameters();
         }
 
+        public void DrawTutorialWindow()
+        {
+
+        }
+
         /// <summary>
         /// Called on node connection selection
         /// </summary>
@@ -459,8 +464,22 @@ namespace NodeEditorFramework
                 return;
 
             NodeEditorParameter param = CreateInstance<NodeEditorParameter>();
+
+            NodeEditorParameter frst = m_LoadedNodeCanvas.GetFirst();
+            string paramName = frst == null ? "Parameter" : frst.Name + "1";
+
             param.SetNodeEditorParameter(ParameterType.Bool, false, "Parameter");
             m_LoadedNodeCanvas.AddParameter(param);
+        }
+
+        public void OnClickRemoveParameter(NodeEditorParameter param)
+        {
+            if (m_LoadedNodeCanvas)
+            {
+                param.OnRemove();
+                m_LoadedNodeCanvas.RemoveParameter(param);
+            }
+
         }
 
         /// <summary>

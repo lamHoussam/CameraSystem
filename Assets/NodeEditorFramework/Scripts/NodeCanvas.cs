@@ -19,6 +19,9 @@ namespace NodeEditorFramework
         // TODO: Optimise to use only Hashtable
         [SerializeField] private List<NodeEditorParameter> m_Parameters;
         public int ParametersCount => m_Parameters == null ? 0 : m_Parameters.Count;
+
+        private Vector2 m_scrollPosition;
+
         public NodeEditorParameter GetParameter(string name)
         {
             for(int i = 0; i < m_Parameters.Count; i++)
@@ -29,7 +32,7 @@ namespace NodeEditorFramework
         }
         public NodeEditorParameter GetParameter(int ind)
         {
-            return m_Parameters[ind];
+            return ind >= ParametersCount ? null : m_Parameters[ind];
             //object obj = m_Parameters[ind];
             //return (NodeEditorParameter)obj;
         }
@@ -85,6 +88,25 @@ namespace NodeEditorFramework
             }
 
             return node;
+        }
+
+        /// <summary>
+        /// Evaluate conditions starting from Entry to first node of type T
+        /// </summary>
+        /// <typeparam name="T">node's type</typeparam>
+        /// <returns>Last node such that path from Entry to node evaluates to true and node is of type T</returns>
+        public T Evaluate<T>() where T : Node
+        {
+            Node node = Entry;
+            T next = node.GetNextNode<T>();
+
+            while (next != null)
+            {
+                node = next;
+                next = next.GetNextNode<T>();
+            }
+
+            return node == Entry ? default : (T)node;
         }
 
 
@@ -180,22 +202,38 @@ namespace NodeEditorFramework
             }
         }
 
+        public void RemoveParameter(NodeEditorParameter param)
+        {
+            if (m_Parameters != null)
+                m_Parameters.Remove(param);
+        }
+
+        public void RemoveParameter(string name) => RemoveParameter(GetParameter(name));
+        public void RemoveParameter(int ind) => RemoveParameter(GetParameter(ind));
+
         /// <summary>
         /// Display to Node editor
         /// </summary>
         /// <param name="rect"></param>
         public void DisplayParameters()
         {
+
             GUILayout.Label(new GUIContent("Parameters"), NodeEditor.Instance.m_NodeLabelBold);
             if (m_Parameters == null)
                 return;
 
+            GUILayout.BeginVertical(GUI.skin.box);
+            m_scrollPosition = GUILayout.BeginScrollView(m_scrollPosition, false, true);
+
             for (int i = 0; i < m_Parameters.Count; i++)
             {
-                NodeEditorParameter param = (NodeEditorParameter)GetParameter(i);
+                NodeEditorParameter param = GetParameter(i);
                 param.Display();
                 //rect.position += Vector2.up * 100;
             }
+
+            GUILayout.EndScrollView();
+            GUILayout.EndVertical();
         }
 #endif
     }
