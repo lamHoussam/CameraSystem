@@ -46,6 +46,8 @@ namespace CameraSystem
         private SerializedProperty spYaw, spPitch;
         private SerializedProperty spCameraType;
 
+        private SerializedProperty spCameraLockTarget;
+
         private void OnEnable()
         {
             spTarget = serializedObject.FindProperty("m_Target");
@@ -82,6 +84,8 @@ namespace CameraSystem
             spPitch = serializedObject.FindProperty("m_pitch");
 
             spCameraType = serializedObject.FindProperty("m_CameraType");
+
+            spCameraLockTarget = serializedObject.FindProperty("m_TargetLockOn");
 
             m_CameraController = target as CameraController;
         }
@@ -186,6 +190,9 @@ namespace CameraSystem
 
             EditorGUILayout.PropertyField(spYaw);
             EditorGUILayout.PropertyField(spPitch);
+
+            EditorGUILayout.Space();
+            EditorGUILayout.PropertyField(spCameraLockTarget);
 
             serializedObject.ApplyModifiedProperties();
         }

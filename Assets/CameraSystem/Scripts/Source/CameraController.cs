@@ -45,6 +45,8 @@ namespace CameraSystem
         [SerializeField] private CameraType m_CameraType;
         public CameraType Type => m_CameraType;
 
+        [SerializeField] private Transform m_TargetLockOn;
+
         private bool m_isBlending;
 
         private float m_blendDistanceVariation;
@@ -59,10 +61,14 @@ namespace CameraSystem
         private float m_previousDistance;
         private Vector2 m_previousOffset;
 
+        private bool m_isLockedOnTarget;
+
         private void Awake()
         {
             m_previousDistance = m_distance;
             m_previousOffset = m_offset;
+
+            ActivateLockOn(m_TargetLockOn);
         }
 
         private void LateUpdate()
@@ -71,7 +77,10 @@ namespace CameraSystem
             if(m_CameraType == CameraType.Controllable)
                 SetPitchYaw();
 
-            ThirdPersonCamera();
+            if (m_isLockedOnTarget)
+                LockOn();
+            else
+                ThirdPersonCamera();
         }
 
         private void Update()
@@ -87,6 +96,10 @@ namespace CameraSystem
         /// <param name="look">Pitch, Yaw values to add </param>
         public void SetPitchYaw(Vector2 look)
         {
+            if (m_isLockedOnTarget)
+                return;
+
+
             m_pitch += Time.deltaTime * look.y * m_sensitivity.y;
             m_yaw += Time.deltaTime * look.x * m_sensitivity.x;
 
@@ -143,7 +156,29 @@ namespace CameraSystem
 
         }
 
+        public void ActivateLockOn(Transform targetLock)
+        {
+            m_isLockedOnTarget = true;
 
+            m_TargetLockOn = targetLock;
+        }
+
+        private void LockOn(Transform targetLock)
+        {
+            Vector3 dir = m_Target.position - targetLock.position;
+            Vector3 camPosition = dir + dir.normalized * m_distance;
+            m_realOffset = transform.right * m_offset.x + Vector3.up * m_offset.y;
+
+            transform.position = targetLock.position + camPosition + m_realOffset;
+            transform.LookAt(targetLock.position);
+        }
+
+        private void LockOn() => LockOn(m_TargetLockOn);
+
+        public void DeactivateLockOn()
+        {
+            m_isLockedOnTarget = false;
+        }
 
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {

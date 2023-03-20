@@ -594,6 +594,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   m_CameraSettingsToLoad: {fileID: 11400000, guid: ddb5991a72c7533418a8bf03d99db3a4, type: 2}
   m_CameraType: 1
+  m_TargetLockOn: {fileID: 865817251}
   m_yaw: 2.1
   m_pitch: -1.2
 --- !u!114 &963194230
