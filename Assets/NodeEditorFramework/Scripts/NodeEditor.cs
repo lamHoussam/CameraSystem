@@ -1,7 +1,5 @@
 using System;
 using UnityEngine;
-using System.Linq;
-using System.Collections.Generic;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -10,14 +8,36 @@ namespace NodeEditorFramework
     public class NodeEditor : EditorWindow
     {
         private static NodeEditor m_Instance;
-        public static NodeEditor Instance => m_Instance;
 
         private NodeCanvas m_LoadedNodeCanvas;
-        public NodeCanvas LoadedNodeCanvas => m_LoadedNodeCanvas;
 
         public const string m_editorPath = "Assets/NodeCanvases/";
         private string m_openedCanvas = "New Canvas";
         private string m_openedCanvasPath;
+
+        private float m_sideWindowWidth = 400;
+        private Node m_SelectedNodeForConnection;
+
+        private NodeConnection m_SelectedNodeConnection; 
+
+        private Vector2 m_offset;
+        private Vector2 m_drag;
+
+
+
+        private float m_scale = 1;
+
+        private bool m_isInitialised = false;
+
+
+        #region Properties API
+        public static NodeEditor Instance => m_Instance;
+        public Texture2D m_TrueTexture, m_FalseTexture;
+
+        public Color m_trueColor = new Color(.52f, .7f, .17f, .2f);
+        public Color m_falseColor = new Color(.8F, .15F, .37F, .2f);
+        public Rect SideWindowRect => new Rect(position.width - m_sideWindowWidth, 0, m_sideWindowWidth, position.height);
+        public Rect ParameterWindowRect => new Rect(0, 0, m_sideWindowWidth, position.height);
 
         public GUIStyle m_NodeBase;
         public GUIStyle m_SelectedNodeBase;
@@ -28,27 +48,115 @@ namespace NodeEditorFramework
 
         public static GUIStyle m_NodeButton;
 
-        private float m_sideWindowWidth = 400;
-        public Rect SideWindowRect => new Rect(position.width - m_sideWindowWidth, 0, m_sideWindowWidth, position.height);
-        public Rect ParameterWindowRect => new Rect(0, 0, m_sideWindowWidth, position.height);
-
-        private Node m_SelectedNodeForConnection;
-
-        private NodeConnection m_SelectedNodeConnection; 
-
-        private Vector2 m_offset;
-        private Vector2 m_drag;
-
-        public Color m_trueColor = new Color(.52f, .7f, .17f, .2f);
-        public Color m_falseColor = new Color(.8F, .15F, .37F, .2f);
-
-        public Texture2D m_TrueTexture, m_FalseTexture;
+        public NodeCanvas LoadedNodeCanvas => m_LoadedNodeCanvas;
+        #endregion
 
 
-        private float m_scale = 1;
+        /// <summary>
+        /// Create editor window
+        /// </summary>
+        [MenuItem("Window/Node Editor")]
+        private static void CreateEditor()
+        {
+            m_Instance = GetWindow<NodeEditor>();
+            m_Instance.minSize = new Vector2(800, 600);
 
-        private bool m_isInitialised = false;
+            if (Instance.LoadedNodeCanvas == null)
+            {
+                Instance.CreateNewNodeCanvas();
+            }
 
+            //Instance.LoadedNodeCanvas.LoadCanvasParameterState();
+
+            Instance.m_scale = 1;
+        }
+
+        private void OnGUI()
+        {
+            if (!m_isInitialised)
+                Init();
+
+            DrawGrid(20, .2f, Color.gray);
+            DrawGrid(100, .2f, Color.gray);
+
+            m_LoadedNodeCanvas.ProcessNodeEvents(Event.current);
+
+            ProcessEvents(Event.current);
+
+            if (m_LoadedNodeCanvas)
+            {
+                for (int i = 0; i < m_LoadedNodeCanvas.NodeCount; i++)
+                    m_LoadedNodeCanvas.GetNode(i).Draw();
+
+                for(int i = 0; i < m_LoadedNodeCanvas.NodeConnectionsCount; i++)
+                    m_LoadedNodeCanvas.GetNodeConnection(i).Draw();
+            }
+
+            m_sideWindowWidth = Math.Min(600, Math.Max(200, (int)(position.width / 5)));
+            GUILayout.BeginArea(SideWindowRect, m_NodeBox);
+            DrawSideWindow();
+
+            GUILayout.EndArea();
+
+            GUILayout.BeginArea(ParameterWindowRect, m_NodeBox);
+            DrawParametersWindow();
+            GUILayout.EndArea();
+
+            if (GUI.changed)
+                Repaint();
+        }
+
+
+        private void ProcessContextMenu(Vector2 mousePosition)
+        {
+            GenericMenu genericMenu = new GenericMenu();
+            Type[] assmblyTypes = typeof(Node).Assembly.GetTypes();
+
+            foreach (Type type in assmblyTypes)
+            {
+                if (type.IsSubclassOf(typeof(Node)) && type != typeof(EntryNode))
+                {
+                    genericMenu.AddItem(
+                        new GUIContent("Add " + type.Name),
+                        false,
+                        () => type.GetMethod("Create").Invoke(null, new object[] { new Rect(mousePosition, new Vector2(200, 50)) })
+                    );
+                }
+            }
+
+            genericMenu.AddItem(new GUIContent("Add new Parameter"), false, () => OnClickAddParameter());
+            genericMenu.AddItem(new GUIContent("Relocate"), false, () => Relocate());
+
+            genericMenu.ShowAsContext();
+        }
+
+
+        private void DrawGrid(float gridSpacing, float gridOpacity, Color gridColor)
+        {
+            int widthDivs = Mathf.CeilToInt(position.width / gridSpacing);
+            int heightDivs = Mathf.CeilToInt(position.height / gridSpacing);
+
+            Handles.BeginGUI();
+            Handles.color = new Color(gridColor.r, gridColor.g, gridColor.b, gridOpacity);
+            m_offset += m_drag * 0.5f;
+            Vector3 newOffset = new Vector3(m_offset.x % gridSpacing, m_offset.y % gridSpacing, 0);
+
+            for (int i = 0; i < widthDivs; i++)
+            {
+                Handles.DrawLine(new Vector3(gridSpacing * i, -gridSpacing, 0) + newOffset, new Vector3(gridSpacing * i, position.height, 0f) + newOffset);
+            }
+
+            for (int j = 0; j < heightDivs; j++)
+            {
+                Handles.DrawLine(new Vector3(-gridSpacing, gridSpacing * j, 0) + newOffset, new Vector3(position.width, gridSpacing * j, 0f) + newOffset);
+            }
+
+            Handles.color = Color.white;
+            Handles.EndGUI();
+        }
+
+
+        #region Editor API
         public static Texture2D ColorToTex(Color col)
         {
             Texture2D tex = new Texture2D(1, 1);
@@ -104,27 +212,13 @@ namespace NodeEditorFramework
 
             if (m_LoadedNodeCanvas.Entry == null)
                 OnClickAddNode(new Vector2(Instance.position.width / 2, Instance.position.height / 2), "EntryNode");
+
+            for (int i = 0; i < m_LoadedNodeCanvas.NodeConnectionsCount; i++)
+                m_LoadedNodeCanvas.GetNodeConnection(i).Deselect();
         }
 
 
 
-
-        /// <summary>
-        /// Create editor window
-        /// </summary>
-        [MenuItem("Window/Node Editor")]
-        private static void CreateEditor()
-        {
-            m_Instance = GetWindow<NodeEditor>();
-            m_Instance.minSize = new Vector2(800, 600);
-
-            if (Instance.LoadedNodeCanvas == null)
-            {
-                Instance.CreateNewNodeCanvas();
-            }
-
-            Instance.m_scale = 1;
-        }
 
         /// <summary>
         /// Create Node canvas
@@ -165,6 +259,8 @@ namespace NodeEditorFramework
             }
             m_LoadedNodeCanvas = newNodeCanvas;
 
+            m_LoadedNodeCanvas.LoadCanvasParameterState();
+
             string[] folders = path.Split(new char[] { '/' }, System.StringSplitOptions.None);
             m_openedCanvas = folders[^1];
             m_openedCanvasPath = path;
@@ -185,6 +281,7 @@ namespace NodeEditorFramework
             string existingPath = AssetDatabase.GetAssetPath(m_LoadedNodeCanvas);
             if (!System.String.IsNullOrEmpty(existingPath))
             {
+                m_LoadedNodeCanvas.SaveCanvasParameterState();
                 if (existingPath != path)
                 {
                     AssetDatabase.CopyAsset(existingPath, path);
@@ -208,14 +305,10 @@ namespace NodeEditorFramework
                 AssetDatabase.AddObjectToAsset(node, m_LoadedNodeCanvas);
             }
 
+            m_LoadedNodeCanvas.SaveCanvasParameterState();
 
-            for(int i = 0; i < m_LoadedNodeCanvas.ParametersCount; i++)
-            {
-                NodeEditorParameter param = m_LoadedNodeCanvas.GetParameter(i);
-                AssetDatabase.AddObjectToAsset(param, m_LoadedNodeCanvas);
-            }
 
-            for(int i = 0; i < m_LoadedNodeCanvas.NodeConnectionsCount; i++)
+            for (int i = 0; i < m_LoadedNodeCanvas.NodeConnectionsCount; i++)
             {
                 NodeConnection cnx = m_LoadedNodeCanvas.GetNodeConnection(i);
                 for (int j = 0; j < cnx.ConditionsCount; j++)
@@ -328,7 +421,7 @@ namespace NodeEditorFramework
             if(m_LoadedNodeCanvas.ParametersCount == 0 || connection == null) 
                 return;
 
-            NodeEditorParameter param = m_LoadedNodeCanvas.GetFirst();
+            NodeEditorParameter param = m_LoadedNodeCanvas.GetFirstOrNull();
             ConnectionCondition condition = CreateInstance<ConnectionCondition>();
             object defaultValue = param.Type == ParameterType.Bool ? (object)false : (object)0;
 
@@ -337,41 +430,6 @@ namespace NodeEditorFramework
             connection.AddCondition(condition);
         }
 
-
-        private void OnGUI()
-        {
-            if (!m_isInitialised)
-                Init();
-
-            DrawGrid(20, .2f, Color.gray);
-            DrawGrid(100, .2f, Color.gray);
-
-            m_LoadedNodeCanvas.ProcessNodeEvents(Event.current);
-
-            ProcessEvents(Event.current);
-
-            if (m_LoadedNodeCanvas)
-            {
-                for (int i = 0; i < m_LoadedNodeCanvas.NodeCount; i++)
-                    m_LoadedNodeCanvas.GetNode(i).Draw();
-
-                for(int i = 0; i < m_LoadedNodeCanvas.NodeConnectionsCount; i++)
-                    m_LoadedNodeCanvas.GetNodeConnection(i).Draw();
-            }
-
-            m_sideWindowWidth = Math.Min(600, Math.Max(200, (int)(position.width / 5)));
-            GUILayout.BeginArea(SideWindowRect, m_NodeBox);
-            DrawSideWindow();
-
-            GUILayout.EndArea();
-
-            GUILayout.BeginArea(ParameterWindowRect, m_NodeBox);
-            DrawParametersWindow();
-            GUILayout.EndArea();
-
-            if (GUI.changed)
-                Repaint();
-        }
 
         /// <summary>
         /// Relocate canvas 
@@ -432,29 +490,6 @@ namespace NodeEditorFramework
         }
 
 
-        private void ProcessContextMenu(Vector2 mousePosition)
-        {
-            GenericMenu genericMenu = new GenericMenu();
-            Type[] assmblyTypes = typeof(Node).Assembly.GetTypes();
-
-            foreach (Type type in assmblyTypes)
-            {
-                if (type.IsSubclassOf(typeof(Node)) && type != typeof(EntryNode))
-                {
-                    genericMenu.AddItem(
-                        new GUIContent("Add " + type.Name), 
-                        false, 
-                        () => type.GetMethod("Create").Invoke(null, new object[] { new Rect(mousePosition, new Vector2(200, 50)) })
-                    );
-                }
-            }
-
-            genericMenu.AddItem(new GUIContent("Add new Parameter"), false, () => OnClickAddParameter());
-            genericMenu.AddItem(new GUIContent("Relocate"), false, () => Relocate());
-
-            genericMenu.ShowAsContext();
-        }
-
         /// <summary>
         /// Called on click add parameter
         /// </summary>
@@ -463,12 +498,11 @@ namespace NodeEditorFramework
             if (!m_LoadedNodeCanvas)
                 return;
 
-            NodeEditorParameter param = CreateInstance<NodeEditorParameter>();
+            NodeEditorParameter param = new NodeEditorParameter(ParameterType.Bool, false, "Parameter");
 
-            NodeEditorParameter frst = m_LoadedNodeCanvas.GetFirst();
+            NodeEditorParameter frst = m_LoadedNodeCanvas.GetFirstOrNull();
             string paramName = frst == null ? "Parameter" : frst.Name + "1";
 
-            param.SetNodeEditorParameter(ParameterType.Bool, false, "Parameter");
             m_LoadedNodeCanvas.AddParameter(param);
         }
 
@@ -582,29 +616,13 @@ namespace NodeEditorFramework
             m_SelectedNodeConnection = null;
         }
 
-        private void DrawGrid(float gridSpacing, float gridOpacity, Color gridColor)
+        public void OnDisable()
         {
-            int widthDivs = Mathf.CeilToInt(position.width / gridSpacing);
-            int heightDivs = Mathf.CeilToInt(position.height / gridSpacing);
+            ClearConnectionSelection();
 
-            Handles.BeginGUI();
-            Handles.color = new Color(gridColor.r, gridColor.g, gridColor.b, gridOpacity);
-            m_offset += m_drag * 0.5f;
-            Vector3 newOffset = new Vector3(m_offset.x % gridSpacing, m_offset.y % gridSpacing, 0);
-
-            for (int i = 0; i < widthDivs; i++)
-            {
-                Handles.DrawLine(new Vector3(gridSpacing * i, -gridSpacing, 0) + newOffset, new Vector3(gridSpacing * i, position.height, 0f) + newOffset);
-            }
-
-            for (int j = 0; j < heightDivs; j++)
-            {
-                Handles.DrawLine(new Vector3(-gridSpacing, gridSpacing * j, 0) + newOffset, new Vector3(position.width, gridSpacing * j, 0f) + newOffset);
-            }
-
-            Handles.color = Color.white;
-            Handles.EndGUI();
         }
+
+        #endregion
     }
 }
 #endif

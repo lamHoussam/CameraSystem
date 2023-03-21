@@ -214,7 +214,6 @@ namespace CameraSystem
             m_offset = settings.Offset;
             m_distance = settings.Distance;
             m_cameraLerpTime = settings.CameraLerpTime;
-            m_sensitivity = settings.Sensitivity;
             StopBlend();
         }
 

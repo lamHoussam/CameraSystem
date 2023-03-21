@@ -9,16 +9,18 @@ namespace NodeEditorFramework
     public class NodeConnection : ScriptableObject
     {
         [SerializeField] private Node m_From, m_To;
+        [SerializeField] private List<ConnectionCondition> m_Conditions;
+        private bool m_isSelected;
+        private Vector2 m_scrollPosition;
+
+        #region Properties API
         public Node From => m_From;
         public Node To => m_To;
-
-        [SerializeField] private List<ConnectionCondition> m_Conditions;
         public int ConditionsCount => m_Conditions == null ? 0 : m_Conditions.Count;
+        #endregion
+
+        #region API
         public ConnectionCondition GetCondition(int i) => m_Conditions[i];
-
-        private bool m_isSelected;
-
-        private Vector2 m_scrollPosition;
 
         /// <summary>
         /// Evaluate all conditions in condition's list
@@ -35,8 +37,11 @@ namespace NodeEditorFramework
 
             return true;
         }
+        #endregion
 
 #if UNITY_EDITOR
+
+        #region Editor API
 
         /// <summary>
         /// Set nodes connected to this
@@ -47,19 +52,6 @@ namespace NodeEditorFramework
         {
             m_From = from;
             m_To = to;
-
-            if (!System.String.IsNullOrEmpty(AssetDatabase.GetAssetPath(NodeEditor.Instance.LoadedNodeCanvas)))
-            {
-                AssetDatabase.AddObjectToAsset(this, NodeEditor.Instance.LoadedNodeCanvas);
-
-                if (m_Conditions != null)
-                {
-                    for (int i = 0; i < m_Conditions.Count; i++)
-                        AssetDatabase.AddObjectToAsset(m_Conditions[i], this);
-                }
-
-                AssetDatabase.Refresh();
-            }
 
         }
 
@@ -175,6 +167,8 @@ namespace NodeEditorFramework
             m_Conditions?.Clear();
             m_From.RemoveConnection(this);
         }
+
+        #endregion
 #endif
 
     }
