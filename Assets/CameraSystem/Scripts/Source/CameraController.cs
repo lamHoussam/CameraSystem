@@ -109,8 +109,10 @@ namespace CameraSystem
         }
 
         public void SetPitchYaw(float x, float y) => SetPitchYaw(new Vector2(x, y));
+
+#if ENABLE_LEGACY_INPUT_MANAGER
         public void SetPitchYaw() => SetPitchYaw(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-        
+#endif
         /// <summary>
         /// Third Person Camera
         /// </summary>
