@@ -521,8 +521,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.010440991, y: 0.07662782, z: 0.000802474, w: -0.9970048}
-  m_LocalPosition: {x: -0.43093932, y: 1.4114136, z: 8.954031}
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0.00000004371139}
+  m_LocalPosition: {x: 1.0900004, y: 1.5, z: 17.53}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -566,26 +566,17 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0
-      outSlope: 0
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.74121386
-      value: 0.24221963
-      inSlope: 1.1108549
-      outSlope: 1.1108549
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 2
-      outSlope: 2
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -593,11 +584,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_CameraSettingsToLoad: {fileID: 11400000, guid: ddb5991a72c7533418a8bf03d99db3a4, type: 2}
-  m_CameraType: 0
+  m_CameraSettingsToLoad: {fileID: 11400000, guid: a813c3013684d0a468c206cb62a9583e, type: 2}
   m_TargetLockOn: {fileID: 865817251}
-  m_yaw: -8.79
-  m_pitch: -1.2
+  m_yaw: 180
+  m_pitch: 0
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0

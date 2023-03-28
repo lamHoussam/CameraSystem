@@ -213,8 +213,8 @@ namespace NodeEditorFramework
             if (m_LoadedNodeCanvas.Entry == null)
                 OnClickAddNode(new Vector2(Instance.position.width / 2, Instance.position.height / 2), "EntryNode");
 
-            for (int i = 0; i < m_LoadedNodeCanvas.NodeConnectionsCount; i++)
-                m_LoadedNodeCanvas.GetNodeConnection(i).Deselect();
+            //for (int i = 0; i < m_LoadedNodeCanvas.NodeConnectionsCount; i++)
+            //    m_LoadedNodeCanvas.GetNodeConnection(i).Deselect();
         }
 
 
@@ -356,25 +356,51 @@ namespace NodeEditorFramework
                 CreateNewNodeCanvas();
             }
 
+            if(GUILayout.Button(new GUIContent("Evaluate to find StateNode")))
+            {
+                Node node = m_LoadedNodeCanvas.Evaluate<StateNode>();
+                if (node)
+                {
+                    Debug.Log("Node's name : " + node.name + "; Type : " + node.GetType());
+                    node.SetEvaluationResult();
+                }
+            }
+
+
+            if (GUILayout.Button(new GUIContent("Evaluate from last node")))
+            {
+                Node node = m_LoadedNodeCanvas.EvaluateFromLastEvaluatedNode();
+                if(node != null)
+                {
+                    Debug.Log("Node's name : " + node.name + "; Type : " + node.GetType());
+                    node.SetEvaluationResult();
+                }
+            }
+
             if (GUILayout.Button(new GUIContent("Evaluate")))
             {
                 Node node = LoadedNodeCanvas.Evaluate();
                 if (node != null)
                 {
                     //Debug.Log("Found node : " + node.ToString());
-                    try
-                    {
-                        StateNode sNode = (StateNode)node;
-                        if (sNode)
-                        {
-                            Debug.Log(sNode.Settings.Value);
-                        }
-                    }
-                    catch (Exception)
+                    //try
+                    //{
+                    //    StateNode sNode = (StateNode)node;
+                    //    if (sNode)
+                    //    {
+                    //        Debug.Log(sNode.Settings.Value);
+                    //    }
+                    //}
+                    //catch (Exception)
+                    //{
+
+                    //}
+                    if(node.GetType() == typeof(StateNode))
                     {
 
+                        Debug.Log("Name : " + (node as StateNode).Settings.name);
                     }
-                    Debug.Log(node.GetType());
+                    Debug.Log("Node's name : " + node.name + "; Type : " + node.GetType());
                     node.SetEvaluationResult();
                 }
             }
@@ -425,7 +451,7 @@ namespace NodeEditorFramework
             ConnectionCondition condition = CreateInstance<ConnectionCondition>();
             object defaultValue = param.Type == ParameterType.Bool ? (object)false : (object)0;
 
-            condition.SetConnectionCondition(param, defaultValue);
+            condition.SetConnectionCondition(param, defaultValue, m_LoadedNodeCanvas);
 
             connection.AddCondition(condition);
         }
@@ -614,12 +640,6 @@ namespace NodeEditorFramework
                 m_SelectedNodeConnection.Deselect();
 
             m_SelectedNodeConnection = null;
-        }
-
-        public void OnDisable()
-        {
-            ClearConnectionSelection();
-
         }
 
         #endregion

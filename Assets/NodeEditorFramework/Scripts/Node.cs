@@ -27,6 +27,7 @@ namespace NodeEditorFramework
         public float Height => m_Rect.height;
         public Vector2 Center => m_Rect.center;
         public virtual bool Removable => true;
+        public int ConnectionsCount => m_Connections == null ? 0 : m_Connections.Count;
         #endregion
 
 
@@ -43,8 +44,13 @@ namespace NodeEditorFramework
                 return null;
 
             for(int i = 0; i < m_Connections.Count; i++)
+            {
                 if (m_Connections[i].EvaluateConditions())
+                {
+                    Debug.LogError(m_Connections[i].To);
                     return m_Connections[i].To;
+                }
+            }
 
             return null;
         }
@@ -58,11 +64,20 @@ namespace NodeEditorFramework
         /// <returns>Next node of type T with true conditions from this</returns>
         public T GetNextNode<T>() where T : Node
         {
-            T res = default;
+            if (m_Connections == null)
+                return default;
 
+            for(int i = 0; i < m_Connections.Count; i++)
+            {
+                if (m_Connections[i].EvaluateConditions() && m_Connections[i].To.GetType() == typeof(T))
+                    return m_Connections[i].To as T;
+            }
 
-            return res;
+            return default(T);
         }
+
+        public NodeConnection GetConnection(int ind) => m_Connections[ind];
+
 
         #endregion
 
@@ -83,6 +98,7 @@ namespace NodeEditorFramework
         /// </summary>
         public virtual void OnRemove()
         {
+            DestroyImmediate(this);
         }
 
 

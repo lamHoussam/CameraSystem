@@ -12,6 +12,11 @@ namespace CameraSystem
         private void Awake()
         {
             m_CameraController = GetComponent<CameraController>();
+
+            m_LogicCanvas.LoadCanvasParameterState();
+            //Debug.LogWarning(m_LogicCanvas.GetParameter("crouch"));
+            //m_LogicCanvas.SaveCanvasParameterState();
+            //m_LogicCanvas.LoadCanvasParameterState();
         }
 
         //public T GetValue<T>(string paramName) => 
@@ -52,16 +57,17 @@ namespace CameraSystem
             }
 
             CameraNode evalNode = m_LogicCanvas.Evaluate() as CameraNode;
-            if(evalNode == null)
+            if(evalNode == default)
             {
                 Debug.LogError("Use Camera Settings node in graph");
-                return null;
+                return default(CameraSettings);
             }
             if(blend)
                 m_CameraController.BlendBetweenCameraSettings(evalNode.Settings);
             else
                 m_CameraController.SetCameraSettings(evalNode.Settings);
 
+            Debug.LogError(evalNode.Settings);
             return evalNode.Settings;
         }
     }

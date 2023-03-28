@@ -48,9 +48,13 @@ namespace NodeEditorFramework
         [SerializeField] private Hashtable m_Parameters;
         private List<string> m_ParametersNames;
 
+        private Node m_LastEvaluatedNode;
+        public Node LastEvaluatedNode => m_LastEvaluatedNode == default(Node) ? Entry : m_LastEvaluatedNode;
+
+        private Hashtable m_NodesDiscoveredHashtable;
 
         #region Properties API
-        public EntryNode Entry => NodeCount == 0 ? null : (EntryNode)m_Nodes[0];
+        public EntryNode Entry => NodeCount == 0 ? default : (EntryNode)m_Nodes[0];
         public int NodeCount => m_Nodes == null ? 0 : m_Nodes.Count;
         public int NodeConnectionsCount => m_NodesConnections == null ? 0 : m_NodesConnections.Count;
         public int ParametersCount => m_Parameters == null ? 0 : m_Parameters.Count;
@@ -83,16 +87,12 @@ namespace NodeEditorFramework
         /// </summary>
         /// <param name="name">name to check</param>
         /// <returns>if exists</returns>
-        public bool ContainsParameter(string name) => m_Parameters.ContainsKey(name);        
+        public bool ContainsParameter(string name) => m_Parameters.ContainsKey(name);
 
-        /// <summary>
-        /// Evaluate conditions starting from Entry
-        /// </summary>
-        /// <returns>Last node such that path from Entry to node evaluates to true</returns>
-        public Node Evaluate()
+
+        public Node EvaluateFrom(Node startingNode)
         {
-
-            Node node = Entry;
+            Node node = startingNode;
             Node next = node.GetNextNode();
             while (next != null)
             {
@@ -100,27 +100,109 @@ namespace NodeEditorFramework
                 next = next.GetNextNode();
             }
 
+            m_LastEvaluatedNode = node;
             return node;
         }
+
+
+        /// <summary>
+        /// Evaluate conditions starting from Entry
+        /// </summary>
+        /// <returns>Last node such that path from Entry to node evaluates to true</returns>
+        public Node Evaluate() => EvaluateFrom(Entry);
+
+
+        /// <summary>
+        /// Evaluate conditions starting from Last evaluated node (default Entry)
+        /// </summary>
+        /// <returns>Last node such that path from Last evaluated node to result node evaluates to true</returns>
+        public Node EvaluateFromLastEvaluatedNode() => EvaluateFrom(LastEvaluatedNode);
+
+        private T FindNode<T>(Node node) where T : Node
+        {
+            m_NodesDiscoveredHashtable[node.GetInstanceID()] = true;
+            //Node next = node.GetNextNode();
+
+            Node next = default;
+
+            for(int i = 0; i < node.ConnectionsCount; i++)
+            {
+                NodeConnection cnx = node.GetConnection(i);
+                //Debug.LogWarning("Node : " + cnx.To);
+                bool discovered = (bool)m_NodesDiscoveredHashtable[cnx.To.GetInstanceID()];
+                //Debug.LogWarning("Disc : " + discovered);
+                if (cnx.EvaluateConditions() && !discovered)
+                    next = cnx.To;
+            }
+
+            //// Only consider paths from Entry
+            if (next == default(Node))
+            {
+                for(int i = 0; i < Entry.ConnectionsCount; i++)
+                {
+                    if (!Entry.GetConnection(i).EvaluateConditions())
+                        continue;
+                    Node currentNode = Entry.GetConnection(i).To;
+                    if (currentNode)
+                    {
+                        bool discovered = (bool)m_NodesDiscoveredHashtable[currentNode.GetInstanceID()];
+                        m_NodesDiscoveredHashtable[currentNode.GetInstanceID()] = true;
+                        if (!discovered)
+                        {
+                            next = currentNode;
+                            break;
+                        }
+                    }
+
+                }
+            }
+
+            if (next == default(Node))
+                return default(T);
+
+            T prevRes = default(T);
+            if (next.GetType() == typeof(T))
+                prevRes = next as T;
+
+            T nextUndiscovered = FindNode<T>(next);
+            return nextUndiscovered == default(T) ? prevRes : nextUndiscovered;
+        }
+
+
+        /// <summary>
+        /// Evaluate conditions starting from node to first node of type T
+        /// </summary>
+        /// <typeparam name="T">node's type</typeparam>
+        /// <returns>Last node such that path from node to result node evaluates to true and node is of type T</returns>
+        public T EvaluateFrom<T>(Node node) where T : Node
+        {
+            m_NodesDiscoveredHashtable?.Clear();
+            m_NodesDiscoveredHashtable = new Hashtable();
+
+            for (int i = 0; i < NodeCount; i++)
+                m_NodesDiscoveredHashtable.Add(m_Nodes[i].GetInstanceID(), false);
+
+            T result = FindNode<T>(node);
+            m_LastEvaluatedNode = result;
+
+            return result;
+        }
+
+
+        /// <summary>
+        /// Evaluate conditions starting from Last evaluated node (if none then Enrty) to first node of type T
+        /// </summary>
+        /// <typeparam name="T">node's type</typeparam>
+        /// <returns>Last node such that path from Last evaluated node (if none then Enrty) to node evaluates to true and node is of type T</returns>
+        public T EvaluateFromLastEvaluatedNode<T>() where T : Node => EvaluateFrom<T>(LastEvaluatedNode);
+
 
         /// <summary>
         /// Evaluate conditions starting from Entry to first node of type T
         /// </summary>
         /// <typeparam name="T">node's type</typeparam>
         /// <returns>Last node such that path from Entry to node evaluates to true and node is of type T</returns>
-        public T Evaluate<T>() where T : Node
-        {
-            Node node = Entry;
-            T next = node.GetNextNode<T>();
-
-            while (next != null)
-            {
-                node = next;
-                next = next.GetNextNode<T>();
-            }
-
-            return node == Entry ? default : (T)node;
-        }
+        public T Evaluate<T>() where T : Node => EvaluateFrom<T>(Entry);
 
         public void SaveCanvasParameterState()
         {

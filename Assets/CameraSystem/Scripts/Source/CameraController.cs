@@ -1,18 +1,9 @@
-using System.Collections;
-using UnityEditor;
 using UnityEngine;
 
 namespace CameraSystem
 {
     public class CameraController : MonoBehaviour
     {
-        public enum CameraType
-        {
-            Controllable, 
-            NonControllable,
-        }
-
-
         [SerializeField] private Transform m_Target;
 
         [SerializeField] private float m_distance;
@@ -42,9 +33,6 @@ namespace CameraSystem
 
         [SerializeField] private CameraSettings m_CameraSettingsToLoad;
 
-        [SerializeField] private CameraType m_CameraType;
-        public CameraType Type => m_CameraType;
-
         [SerializeField] private Transform m_TargetLockOn;
 
         private bool m_isBlending;
@@ -68,14 +56,16 @@ namespace CameraSystem
             m_previousDistance = m_distance;
             m_previousOffset = m_offset;
 
-            ActivateLockOn(m_TargetLockOn);
+            //ActivateLockOn(m_TargetLockOn);
         }
 
         public void LateUpdate()
         {
             if (!m_Target || !Active) return;
-            if(m_CameraType == CameraType.Controllable)
-                SetPitchYaw();
+
+#if ENABLE_LEGACY_INPUT_MANAGER
+            SetPitchYaw();
+#endif
 
             if (m_isLockedOnTarget)
                 LockOn();
