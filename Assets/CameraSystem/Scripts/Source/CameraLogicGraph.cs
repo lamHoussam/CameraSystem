@@ -3,7 +3,6 @@ using NodeEditorFramework;
 
 namespace CameraSystem
 {
-    [RequireComponent(typeof(CameraController))]
     public class CameraLogicGraph : MonoBehaviour
     {
         [SerializeField] private NodeCanvas m_LogicCanvas;
@@ -11,7 +10,7 @@ namespace CameraSystem
 
         private void Awake()
         {
-            m_CameraController = GetComponent<CameraController>();
+            m_CameraController = Camera.main.GetComponent<CameraController>();
 
             m_LogicCanvas.LoadCanvasParameterState();
             //Debug.LogWarning(m_LogicCanvas.GetParameter("crouch"));
