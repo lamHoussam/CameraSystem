@@ -213,6 +213,8 @@ namespace NodeEditorFramework
         {
             string saveFileName = name + "_params.json";
 
+            if (m_Parameters == null)
+                return;
             
             string json = JsonUtility.ToJson(SerializableHashtable.FromHashtable(m_Parameters));
             string filePath = Path.Combine(Application.persistentDataPath, saveFileName);
@@ -242,9 +244,7 @@ namespace NodeEditorFramework
 
             }
             else
-            {
                 Debug.Log("Save file not found.");
-            }
         }
 
         public void DeleteCanvasParameterState()

@@ -37,29 +37,6 @@ namespace CameraSystem
             }
 
             EditorGUILayout.EndVertical();
-
-            EditorGUILayout.BeginVertical(GUI.skin.box);
-
-            for(int i = 0; i < m_Cnv.NodeConnectionsCount; i++)
-            {
-                EditorGUILayout.BeginVertical(GUI.skin.box);
-                NodeConnection cnx = m_Cnv.GetNodeConnection(i);
-                for(int j = 0; j < cnx.ConditionsCount; j++)
-                {
-                    ConnectionCondition cnd = cnx.GetCondition(j);
-                    EditorGUILayout.BeginHorizontal();
-
-                    //EditorGUILayout.LabelField(cnd.);
-                    //EditorGUILayout.Toggle(param.Value.BoolValue);
-
-                    EditorGUILayout.EndHorizontal();
-
-                }
-                EditorGUILayout.EndVertical();
-            }
-
-            EditorGUILayout.EndVertical();
-
         }
     }
 }

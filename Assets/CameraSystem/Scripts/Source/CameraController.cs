@@ -51,11 +51,13 @@ namespace CameraSystem
 
         private bool m_isLockedOnTarget;
 
+        private bool m_enableCollisionOldValue;
+
         private void Awake()
         {
             m_previousDistance = m_distance;
             m_previousOffset = m_offset;
-
+            m_enableCollisionOldValue = m_enableCameraCollision;
             //ActivateLockOn(m_TargetLockOn);
         }
 
@@ -64,7 +66,7 @@ namespace CameraSystem
             if (!m_Target || !Active) return;
 
 #if ENABLE_LEGACY_INPUT_MANAGER
-            SetPitchYaw();
+            TakePitchYawInput();
 #endif
 
             if (m_isLockedOnTarget)
@@ -84,7 +86,7 @@ namespace CameraSystem
         /// Change camera's pitch and yaw 
         /// </summary>
         /// <param name="look">Pitch, Yaw values to add </param>
-        public void SetPitchYaw(Vector2 look)
+        public void TakePitchYawInput(Vector2 look)
         {
             if (m_isLockedOnTarget)
                 return;
@@ -99,10 +101,27 @@ namespace CameraSystem
                 m_yaw = ClampAngle(m_yaw, m_yawMinValue, m_yawMaxValue);
         }
 
-        public void SetPitchYaw(float x, float y) => SetPitchYaw(new Vector2(x, y));
+        public void TakePitchYawInput(float x, float y) => TakePitchYawInput(new Vector2(x, y));
+
+        public void SetYawPitch(Vector2 values)
+        {
+            if (m_isLockedOnTarget)
+                return;
+
+
+            m_pitch = values.y;
+            m_yaw = values.x;
+
+            if (m_usePitchLimit)
+                m_pitch = ClampAngle(m_pitch, m_minPitchValue, m_maxPitchValue);
+            if (m_useYawLimit)
+                m_yaw = ClampAngle(m_yaw, m_yawMinValue, m_yawMaxValue);
+
+        }
+        public void SetYawPitch(float x, float y) => SetYawPitch(new Vector2(x, y));
 
 #if ENABLE_LEGACY_INPUT_MANAGER
-        public void SetPitchYaw() => SetPitchYaw(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        public void TakePitchYawInput() => TakePitchYawInput(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 #endif
         /// <summary>
         /// Third Person Camera
@@ -126,11 +145,11 @@ namespace CameraSystem
                 hor * Mathf.Sin(m_yaw * Mathf.Deg2Rad),
                 m_distance * Mathf.Sin(m_pitch * Mathf.Deg2Rad),
                 hor * Mathf.Cos(m_yaw * Mathf.Deg2Rad)
-            );  
+            );
             Quaternion rot = Quaternion.Euler(/*(Vector3)m_offset + */Vector3.up * m_yaw + Vector3.right * m_pitch);
 
             m_expectedPos = pos;
-            
+
             // TODO: Change to take direction from player
             Vector3 direction = (pos - m_Target.position).normalized;
 
@@ -227,6 +246,9 @@ namespace CameraSystem
             m_previousDistance = m_distance;
             m_previousOffset = m_offset;
 
+            m_enableCollisionOldValue = m_enableCameraCollision;
+            m_enableCameraCollision = false;
+
             t = 0;
         }
 
@@ -251,6 +273,8 @@ namespace CameraSystem
         public void StopBlend()
         {
             m_isBlending = false;
+            m_enableCameraCollision = m_enableCollisionOldValue;
+
         }
 
         public void SetTarget(Transform target)

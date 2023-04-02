@@ -13,14 +13,7 @@ namespace CameraSystem
             m_CameraController = Camera.main.GetComponent<CameraController>();
 
             m_LogicCanvas.LoadCanvasParameterState();
-            //Debug.LogWarning(m_LogicCanvas.GetParameter("crouch"));
-            //m_LogicCanvas.SaveCanvasParameterState();
-            //m_LogicCanvas.LoadCanvasParameterState();
         }
-
-        //public T GetValue<T>(string paramName) => 
-        //    //m_LogicCanvas.GetValue<T>(paramName);
-        //public void SetValue<T>(string paramName, T value) => m_LogicCanvas.SetValue<T>(paramName, value);
 
         /// <summary>
         /// Get boolean value of parameter with paramName from NodeCanvas graph
