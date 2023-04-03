@@ -4,6 +4,19 @@ namespace CameraSystem
 {
     public class CameraController : MonoBehaviour
     {
+        public enum CameraType
+        {
+            Controllable, 
+            NonControllable,
+        }
+
+        [SerializeField] private CameraType m_CameraType;
+        public CameraType Type
+        {
+            get { return m_CameraType; }
+            set { m_CameraType = value; }
+        }
+
         [SerializeField] private Transform m_Target;
 
         [SerializeField] private float m_distance;
@@ -50,6 +63,7 @@ namespace CameraSystem
         private Vector2 m_previousOffset;
 
         private bool m_isLockedOnTarget;
+        public bool IsLockedOnTarget => m_isLockedOnTarget;
 
         private bool m_enableCollisionOldValue;
 
@@ -58,16 +72,14 @@ namespace CameraSystem
             m_previousDistance = m_distance;
             m_previousOffset = m_offset;
             m_enableCollisionOldValue = m_enableCameraCollision;
+
+            Type = CameraType.Controllable;
             //ActivateLockOn(m_TargetLockOn);
         }
 
         public void LateUpdate()
         {
             if (!m_Target || !Active) return;
-
-#if ENABLE_LEGACY_INPUT_MANAGER
-            TakePitchYawInput();
-#endif
 
             if (m_isLockedOnTarget)
                 LockOn();
@@ -88,7 +100,7 @@ namespace CameraSystem
         /// <param name="look">Pitch, Yaw values to add </param>
         public void TakePitchYawInput(Vector2 look)
         {
-            if (m_isLockedOnTarget)
+            if (m_isLockedOnTarget || Type != CameraType.Controllable)
                 return;
 
 
@@ -128,6 +140,9 @@ namespace CameraSystem
         /// </summary>
         public void ThirdPersonCamera()
         {
+            if (Type != CameraType.Controllable)
+                return;
+
             m_targetDistance = m_distance;
             //if (m_Player)
             //    m_targetDistance = m_Player.Aiming ? m_aimingDistance : m_normalDistance;
@@ -183,6 +198,9 @@ namespace CameraSystem
 
             transform.position = targetLock.position + camPosition + m_realOffset;
             transform.LookAt(targetLock.position);
+
+            m_yaw = transform.eulerAngles.y;
+            m_pitch = transform.eulerAngles.x;
         }
 
         private void LockOn() => LockOn(m_TargetLockOn);
