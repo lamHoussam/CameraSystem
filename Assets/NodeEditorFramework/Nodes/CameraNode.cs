@@ -11,6 +11,7 @@ namespace CameraSystem
         public CameraSettings Settings => m_CameraSettings;
         #endregion Members
 
+#if UNITY_EDITOR
         public static CameraNode Create(Rect rect)
         {
             CameraNode node = CreateInstance<CameraNode>();
@@ -41,5 +42,6 @@ namespace CameraSystem
 
             base.OnRemove();
         }
+#endif
     }
 }
