@@ -744,6 +744,29 @@ ReflectionProbe:
   m_UseOcclusionCulling: 1
   m_Importance: 1
   m_CustomBakedTexture: {fileID: 0}
+--- !u!1 &1775690313 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4416926081852918481, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+  m_PrefabInstance: {fileID: 1762682258}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1775690320 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3893294197879345259, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+  m_PrefabInstance: {fileID: 1762682258}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1775690321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1775690313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e254b1034d7651b4cbebfa0f5cc0a4d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_LogicCanvas: {fileID: 11400000, guid: 82ddbdb4c2e980c4db3c8d5ba4a21a30, type: 2}
 --- !u!1 &2114283753834967212
 GameObject:
   m_ObjectHideFlags: 0
@@ -1072,6 +1095,7 @@ GameObject:
   - component: {fileID: 8944336656349189699}
   - component: {fileID: 8944336656349189698}
   - component: {fileID: 1221041501}
+  - component: {fileID: 8944336656349189701}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: MainCamera
@@ -1138,10 +1162,70 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8944336656349189697}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6, y: 1.6, z: -3}
+  m_LocalPosition: {x: 0.6, y: 1.5, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8944336656349189701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8944336656349189697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f602d83edfce214f9c8271a9617979a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_CameraType: 0
+  m_Target: {fileID: 1775690320}
+  m_distance: 3
+  m_offset: {x: 0.6, y: 1.5}
+  m_assetName: AimRightCamera
+  m_assetPath: Assets/CameraSystem/Settings
+  m_cameraLerpTime: 40
+  m_sensitivity: {x: 100, y: -100}
+  m_useYawLimit: 0
+  m_usePitchLimit: 1
+  m_minPitchValue: -10
+  m_maxPitchValue: 70
+  m_yawMinValue: -50
+  m_yawMaxValue: 50
+  m_enableCameraCollision: 1
+  m_cameraCollisionLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  m_active: 1
+  m_transitionTime: 0.6
+  m_TransitionCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_CameraSettingsToLoad: {fileID: 11400000, guid: da37ad6457fa8c345a616c8e123d9fdf, type: 2}
+  m_TargetLockOn: {fileID: 0}
+  m_yaw: 0
+  m_pitch: 0

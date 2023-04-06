@@ -20,6 +20,10 @@ namespace StarterAssets
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
 
+
+		public bool switchShoulder;
+		public bool aim;
+
 #if ENABLE_INPUT_SYSTEM
 		public void OnMove(InputValue value)
 		{
@@ -43,6 +47,16 @@ namespace StarterAssets
 		{
 			SprintInput(value.isPressed);
 		}
+
+		public void OnSwitchshoulder(InputValue value)
+		{
+            switchShoulder = value.isPressed;
+        }
+
+		public void OnAim(InputValue value)
+		{
+            aim = value.isPressed;
+        }
 #endif
 
 

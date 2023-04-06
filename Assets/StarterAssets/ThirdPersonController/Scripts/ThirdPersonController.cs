@@ -1,4 +1,5 @@
-﻿ using UnityEngine;
+﻿using CameraSystem;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
@@ -105,10 +106,16 @@ namespace StarterAssets
         private CharacterController _controller;
         private StarterAssetsInputs _input;
         private GameObject _mainCamera;
+        private CameraController _cameraController;
+
+        private CameraLogicGraph _logicGraph;
 
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
+
+        private bool _rightShoulder;
+        private bool _isAiming;
 
         private bool IsCurrentDeviceMouse
         {
@@ -129,6 +136,7 @@ namespace StarterAssets
             if (_mainCamera == null)
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+                _cameraController = _mainCamera.GetComponent<CameraController>();
             }
         }
 
@@ -139,6 +147,10 @@ namespace StarterAssets
             _hasAnimator = TryGetComponent(out _animator);
             _controller = GetComponent<CharacterController>();
             _input = GetComponent<StarterAssetsInputs>();
+
+            _logicGraph = GetComponent<CameraLogicGraph>();
+            _rightShoulder = true;
+
 #if ENABLE_INPUT_SYSTEM 
             _playerInput = GetComponent<PlayerInput>();
 #else
@@ -159,6 +171,19 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
+
+            if (_input.switchShoulder)
+            {
+                SwitchShoulder();
+                _input.switchShoulder = false;
+            }
+
+            if (_input.aim)
+            {
+                AimLogic();
+                _input.aim = false;
+            }
+
         }
 
         private void LateUpdate()
@@ -190,25 +215,28 @@ namespace StarterAssets
             }
         }
 
+
         private void CameraRotation()
         {
-            // if there is an input and camera position is not fixed
-            if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
-            {
-                //Don't multiply mouse input by Time.deltaTime;
-                float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
+            //// if there is an input and camera position is not fixed
+            //if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
+            //{
+            //    //Don't multiply mouse input by Time.deltaTime;
+            //    float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
-                _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier;
-                _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier;
-            }
+            //    _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier;
+            //    _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier;
+            //}
 
-            // clamp our rotations so our values are limited 360 degrees
-            _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
-            _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
+            //// clamp our rotations so our values are limited 360 degrees
+            //_cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
+            //_cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
 
-            // Cinemachine will follow this target
-            CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
-                _cinemachineTargetYaw, 0.0f);
+            //// Cinemachine will follow this target
+            //CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
+            //    _cinemachineTargetYaw, 0.0f);
+
+            _cameraController.TakePitchYawInput(_input.look);
         }
 
         private void Move()
@@ -368,6 +396,20 @@ namespace StarterAssets
                 new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z),
                 GroundedRadius);
         }
+
+
+        public void SwitchShoulder()
+        {
+            _rightShoulder = !_rightShoulder;
+            _logicGraph.SetBool("rightShoulder", _rightShoulder);
+        }
+
+        public void AimLogic()
+        {
+            _isAiming = !_isAiming;
+            _logicGraph.SetBool("aim", _isAiming);
+        }
+
 
         private void OnFootstep(AnimationEvent animationEvent)
         {
