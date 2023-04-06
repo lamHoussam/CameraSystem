@@ -1,10 +1,5 @@
-using Codice.Client.BaseCommands.BranchExplorer.Layout;
-using JetBrains.Annotations;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing.Drawing2D;
+using Codice.CM.Common.Serialization;
 using UnityEditor;
-using UnityEditor.Build.Content;
 using UnityEngine;
 
 namespace CameraSystem
@@ -45,6 +40,8 @@ namespace CameraSystem
 
         private SerializedProperty spYaw, spPitch;
 
+        // Lock On
+        private SerializedProperty spLockOnTargetCollisionLayer;
         private SerializedProperty spCameraLockTarget;
 
         private void OnEnable()
@@ -84,6 +81,7 @@ namespace CameraSystem
             spYaw = serializedObject.FindProperty("m_yaw");
             spPitch = serializedObject.FindProperty("m_pitch");
 
+            spLockOnTargetCollisionLayer = serializedObject.FindProperty("m_lockOnTargetCollisionLayer");
             spCameraLockTarget = serializedObject.FindProperty("m_TargetLockOn");
 
             m_CameraController = target as CameraController;
@@ -195,6 +193,11 @@ namespace CameraSystem
             EditorGUILayout.PropertyField(spPitch);
 
             EditorGUILayout.Space();
+
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            EditorGUILayout.LabelField("Lock On", EditorStyles.boldLabel);
+
+            EditorGUILayout.PropertyField(spLockOnTargetCollisionLayer);
             EditorGUILayout.PropertyField(spCameraLockTarget);
 
             EditorGUILayout.BeginHorizontal();
@@ -204,6 +207,7 @@ namespace CameraSystem
                 m_CameraController.DeactivateLockOn();
             EditorGUILayout.EndHorizontal();
 
+            EditorGUILayout.EndVertical();
             serializedObject.ApplyModifiedProperties();
         }
 

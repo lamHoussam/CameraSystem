@@ -95,7 +95,7 @@ namespace NodeEditorFramework
         /// </summary>
         public virtual void OnRemove()
         {
-            DestroyImmediate(this);
+            //DestroyImmediate(this);
         }
 
 

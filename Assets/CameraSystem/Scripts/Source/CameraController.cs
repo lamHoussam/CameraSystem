@@ -46,6 +46,7 @@ namespace CameraSystem
 
         [SerializeField] private CameraSettings m_CameraSettingsToLoad;
 
+        [SerializeField] private LayerMask m_lockOnTargetCollisionLayer;
         [SerializeField] private Transform m_TargetLockOn;
 
         private bool m_isBlending;
@@ -183,10 +184,13 @@ namespace CameraSystem
 
         }
 
+        /// <summary>
+        /// Activates camera lock on.
+        /// </summary>
+        /// <param name="targetLock">The target to lock.</param>
         public void ActivateLockOn(Transform targetLock)
         {
             m_isLockedOnTarget = true;
-
             m_TargetLockOn = targetLock;
         }
 
@@ -196,7 +200,16 @@ namespace CameraSystem
             Vector3 camPosition = dir + dir.normalized * m_distance;
             m_realOffset = transform.right * m_offset.x + Vector3.up * m_offset.y;
 
-            transform.position = targetLock.position + camPosition + m_realOffset;
+            Vector3 pos = targetLock.position + camPosition + m_realOffset;
+
+            Vector3 finalTargetPosition = targetLock.position + camPosition + m_realOffset;
+            Vector3 direction = (finalTargetPosition - m_Target.position).normalized;
+
+            Ray ray = new Ray(m_Target.position, direction);
+            if(m_enableCameraCollision && Physics.Raycast(ray, out RaycastHit hit, m_distance, m_cameraCollisionLayer))
+                finalTargetPosition = hit.point - direction * .3f;
+
+            transform.position = Vector3.Lerp(transform.position, finalTargetPosition, m_cameraLerpTime * Time.deltaTime);
             transform.LookAt(targetLock.position);
 
             m_yaw = transform.eulerAngles.y;
@@ -205,6 +218,9 @@ namespace CameraSystem
 
         private void LockOn() => LockOn(m_TargetLockOn);
 
+        /// <summary>
+        /// Deactivates the lock on.
+        /// </summary>
         public void DeactivateLockOn()
         {
             m_isLockedOnTarget = false;

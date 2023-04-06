@@ -22,8 +22,6 @@ namespace NodeEditorFramework
         private Vector2 m_offset;
         private Vector2 m_drag;
 
-
-
         private float m_scale = 1;
 
         private bool m_isInitialised = false;
@@ -286,23 +284,26 @@ namespace NodeEditorFramework
                     AssetDatabase.CopyAsset(existingPath, path);
                     LoadNodeCanvas(path);
                 }
-                return;
             }
-            
-            AssetDatabase.CreateAsset(m_LoadedNodeCanvas, path);
+            else
+                AssetDatabase.CreateAsset(m_LoadedNodeCanvas, path);
+
 
             for (int i = 0; i < m_LoadedNodeCanvas.NodeConnectionsCount; i++)
             {
                 NodeConnection cnx = m_LoadedNodeCanvas.GetNodeConnection(i);
-                AssetDatabase.AddObjectToAsset(cnx, m_LoadedNodeCanvas);
-
+                if (!AssetDatabase.Contains(cnx))
+                    AssetDatabase.AddObjectToAsset(cnx, m_LoadedNodeCanvas);
             }
 
             for (int nodeCnt = 0; nodeCnt < m_LoadedNodeCanvas.NodeCount; nodeCnt++)
             {
                 Node node = m_LoadedNodeCanvas.GetNode(nodeCnt);
-                AssetDatabase.AddObjectToAsset(node, m_LoadedNodeCanvas);
+
+                if (!AssetDatabase.Contains(node))
+                    AssetDatabase.AddObjectToAsset(node, m_LoadedNodeCanvas);
             }
+
 
             m_LoadedNodeCanvas.SaveCanvasParameterState();
 
@@ -313,7 +314,8 @@ namespace NodeEditorFramework
                 for (int j = 0; j < cnx.ConditionsCount; j++)
                 {
                     ConnectionCondition cnd = cnx.GetCondition(j);
-                    AssetDatabase.AddObjectToAsset(cnd, cnx);
+                    if (!AssetDatabase.Contains(cnd))
+                        AssetDatabase.AddObjectToAsset(cnd, cnx);
 
                 }
 
