@@ -279,7 +279,7 @@ namespace CameraSystem
             m_distance = val * m_blendDistanceVariation + m_previousDistance;
             m_offset = val * m_blendOffsetVariation + m_previousOffset;
 
-            Debug.LogWarning("Value : " + val);
+            Debug.LogWarning("Value : " + val + "Time : " + t);
 
             if (t >= m_transitionTime)
                 SetCameraSettings(m_TargetSettings);

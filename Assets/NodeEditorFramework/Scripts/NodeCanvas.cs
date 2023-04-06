@@ -88,6 +88,20 @@ namespace NodeEditorFramework
         public void SetBool(string param, bool value) => GetParameter(param)?.SetBool(value);
 
         /// <summary>
+        /// Set integer value of parameter with name param
+        /// </summary>
+        /// <param name="param">Parameter to change</param>
+        /// <param name="value">New Value</param>
+        public void SetInteger(string param, int value) => GetParameter(param)?.SetInt(value);
+
+        /// <summary>
+        /// Get integer value of parameter with name param
+        /// </summary>
+        /// <param name="param">Variable's name</param>
+        /// <returns></returns>
+        public int GetInteger(string param) => GetParameter(param).GetInt();
+
+        /// <summary>
         /// Checks if parameter with name exists already
         /// </summary>
         /// <param name="name">name to check</param>

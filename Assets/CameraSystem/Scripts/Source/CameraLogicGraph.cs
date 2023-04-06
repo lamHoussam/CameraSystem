@@ -27,10 +27,23 @@ namespace CameraSystem
         /// </summary>
         /// <param name="paramName">Parameter's name</param>
         /// <param name="value">Parameter's new value</param>
-        /// <param name="executeChangeImmed">Apply evaluated camera Settings immediately</param>
         public void SetBool(string paramName, bool value, bool executeChangeImmed = true)
         {
             m_LogicCanvas.SetBool(paramName, value);
+            if (executeChangeImmed)
+                SetCameraSettingsFromGraph();
+        }
+
+
+        /// <summary>
+        /// Set integer value of parameter with parameterName
+        /// </summary>
+        /// <param name="paramName">Parameter's name</param>
+        /// <param name="value">Parameter's new value</param>
+        /// <param name="executeChangeImmed">Apply evaluated camera Settings immediately</param>
+        public void SetInteger(string paramName, int value, bool executeChangeImmed = true)
+        {
+            m_LogicCanvas.SetInteger(paramName, value);
             if (executeChangeImmed)
                 SetCameraSettingsFromGraph();
         }
@@ -59,7 +72,6 @@ namespace CameraSystem
             else
                 m_CameraController.SetCameraSettings(evalNode.Settings);
 
-            Debug.LogError(evalNode.Settings);
             return evalNode.Settings;
         }
     }
