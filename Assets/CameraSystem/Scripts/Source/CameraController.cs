@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CameraSystem
+namespace NodeView
 {
     public class CameraController : MonoBehaviour
     {
@@ -47,6 +47,8 @@ namespace CameraSystem
         [SerializeField] private CameraSettings m_CameraSettingsToLoad;
 
         [SerializeField] private LayerMask m_lockOnTargetCollisionLayer;
+        public LayerMask LockOnTargetCollisionLayer => m_lockOnTargetCollisionLayer;
+
         [SerializeField] private Transform m_TargetLockOn;
 
         private bool m_isBlending;
@@ -294,8 +296,6 @@ namespace CameraSystem
 
             m_distance = val * m_blendDistanceVariation + m_previousDistance;
             m_offset = val * m_blendOffsetVariation + m_previousOffset;
-
-            Debug.LogWarning("Value : " + val + "Time : " + t);
 
             if (t >= m_transitionTime)
                 SetCameraSettings(m_TargetSettings);

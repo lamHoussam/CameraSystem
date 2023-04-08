@@ -2,7 +2,7 @@ using Codice.CM.Common.Serialization;
 using UnityEditor;
 using UnityEngine;
 
-namespace CameraSystem
+namespace NodeView
 {
     [CustomEditor(typeof(CameraController))]
     public class CameraControllerEditor : Editor
@@ -136,8 +136,8 @@ namespace CameraSystem
                 if (spUsePitchLimit.boolValue)
                 {
                     EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.PropertyField(spMinYawValue);
-                    EditorGUILayout.PropertyField(spMaxYawValue);
+                    EditorGUILayout.PropertyField(spMinPitchValue);
+                    EditorGUILayout.PropertyField(spMaxPitchValue);
                     EditorGUILayout.EndHorizontal();
                 }
 
@@ -146,8 +146,8 @@ namespace CameraSystem
                 if (spUseYawLimit.boolValue)
                 {
                     EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.PropertyField(spMinPitchValue);
-                    EditorGUILayout.PropertyField(spMaxPitchValue);
+                    EditorGUILayout.PropertyField(spMinYawValue);
+                    EditorGUILayout.PropertyField(spMaxYawValue);
                     EditorGUILayout.EndHorizontal();
                 }
             }

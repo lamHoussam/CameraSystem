@@ -3,7 +3,7 @@ using NodeEditorFramework;
 using UnityEditor;
 using UnityEngine;
 
-namespace CameraSystem
+namespace NodeView
 {
     [CustomEditor(typeof(CameraLogicGraph))]
     public class CameraLogicGraphEditor : Editor

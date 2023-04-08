@@ -2,7 +2,7 @@ using UnityEngine;
 using NodeEditorFramework;
 using UnityEditor;
 
-namespace CameraSystem
+namespace NodeView
 {
     public class CameraNode : Node
     {

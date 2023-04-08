@@ -23,6 +23,8 @@ namespace StarterAssets
 
 		public bool switchShoulder;
 		public bool aim;
+		public bool lockOn;
+
 
 #if ENABLE_INPUT_SYSTEM
 		public void OnMove(InputValue value)
@@ -57,6 +59,12 @@ namespace StarterAssets
 		{
             aim = value.isPressed;
         }
+
+		public void OnLock(InputValue inputValue)
+		{
+            lockOn = inputValue.isPressed;
+        }
+
 #endif
 
 

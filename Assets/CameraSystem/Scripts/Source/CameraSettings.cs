@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CameraSystem
+namespace NodeView
 {
     [CreateAssetMenu(fileName = "CameraSettings", menuName = "Settings/CameraSettings", order = 1)]
     public class CameraSettings : ScriptableObject

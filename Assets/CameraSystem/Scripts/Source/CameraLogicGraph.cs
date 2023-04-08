@@ -1,7 +1,7 @@
 using UnityEngine;
 using NodeEditorFramework;
 
-namespace CameraSystem
+namespace NodeView
 {
     public class CameraLogicGraph : MonoBehaviour
     {

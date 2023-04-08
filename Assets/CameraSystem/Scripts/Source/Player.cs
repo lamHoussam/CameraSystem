@@ -1,94 +1,82 @@
     using UnityEngine;
+using UnityEngine.Windows;
 
-namespace CameraSystem
+namespace NodeView
 {
 
     public class Player : MonoBehaviour
     {
-        [SerializeField] private float m_speed;
-        [SerializeField] private float RotationSmoothTime;
+        private CameraController _cameraController;
 
-        private bool m_crouched;
+        private CameraLogicGraph _logicGraph;
+        private bool _rightShoulder;
+        private bool _isAiming;
 
-        private CameraLogicGraph m_CameraLogic;
-        private CameraController m_CameraController;
-
-        private float m_targetRotation;
-        private bool m_rightShoulder;
-
-        private CharacterController m_CharacterController;
+        private StarterAssets.StarterAssetsInputs _input;
 
         private void Awake()
         {
-            m_crouched = false;
-            m_rightShoulder = false;
+            _cameraController = Camera.main.GetComponent<CameraController>();
+            _logicGraph = GetComponent<CameraLogicGraph>();
+            _rightShoulder = true;
 
-
-            m_CameraLogic = GetComponent<CameraLogicGraph>();
-            m_CameraController = Camera.main.GetComponent<CameraController>();
-            m_CharacterController = GetComponent<CharacterController>();
+            _input = GetComponent<StarterAssets.StarterAssetsInputs>();
         }
 
         private void Update()
         {
-            float horizontal = Input.GetAxisRaw("Horizontal");
-            float vertical = Input.GetAxisRaw("Vertical");
-
-            m_CameraController.TakePitchYawInput();
-
-            Vector3 direction = new Vector3(horizontal, 0, vertical).normalized;
-
-            if (Input.GetKeyDown(KeyCode.R))
-                LockOn();
-
-            if (direction != Vector3.zero)
+            if (_input.switchShoulder)
             {
-                float rotationVelocity = 0;
-                m_targetRotation = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg +
-                                  m_CameraController.transform.eulerAngles.y;
-                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, m_targetRotation, ref rotationVelocity,
-                    RotationSmoothTime);
-
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-
-                Vector3 targetDirection = Quaternion.Euler(0.0f, m_targetRotation, 0.0f) * Vector3.forward;
-                m_CharacterController.Move(m_speed * Time.deltaTime * targetDirection.normalized);
-                //transform.position += m_speed * Time.deltaTime * targetDirection.normalized;
-            }
-
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                m_crouched = !m_crouched;
-                Debug.Log(m_crouched);
-                m_CameraLogic.SetBool("crouch", m_crouched);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Q))
                 SwitchShoulder();
+                _input.switchShoulder = false;
+            }
+
+            if (_input.aim)
+            {
+                AimLogic();
+                _input.aim = false;
+            }
+
+            if (_input.lockOn)
+            {
+                LockOn();
+                _input.lockOn = false;
+            }
         }
+
+        private void LateUpdate()
+        {
+            _cameraController.TakePitchYawInput(_input.look);
+        }
+
         public void SwitchShoulder()
         {
-            Debug.Log("Switch");
-            m_rightShoulder = !m_rightShoulder;
-            m_CameraLogic.SetBool("rightShoulder", m_rightShoulder);
+            _rightShoulder = !_rightShoulder;
+            _logicGraph.SetBool("rightShoulder", _rightShoulder);
+        }
+
+        public void AimLogic()
+        {
+            _isAiming = !_isAiming;
+            _logicGraph.SetBool("aim", _isAiming);
         }
 
         public void LockOn()
         {
-            Debug.Log("Lock");
-            if (m_CameraController.IsLockedOnTarget)
+            if (_cameraController.IsLockedOnTarget)
             {
-                m_CameraController.DeactivateLockOn();
+                _cameraController.DeactivateLockOn();
                 return;
             }
 
-            Vector2 centerPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
-            Ray ray = m_CameraController.GetComponent<Camera>().ScreenPointToRay(centerPoint);
+            Vector2 center = new Vector2(Screen.width, Screen.height) / 2;
+            Ray ray = _cameraController.GetComponent<Camera>().ScreenPointToRay(center);
 
-            Debug.DrawRay(ray.origin, ray.direction * 25, Color.blue, 30);
+            Debug.DrawRay(ray.origin, ray.direction * 25);
 
-            if (Physics.Raycast(ray, out RaycastHit hit, 25))
-                m_CameraController.ActivateLockOn(hit.transform);
+            if (Physics.Raycast(ray, out RaycastHit hit, 25, _cameraController.LockOnTargetCollisionLayer))
+                _cameraController.ActivateLockOn(hit.transform);
         }
+
     }
 }
