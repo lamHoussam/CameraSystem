@@ -1,5 +1,6 @@
 using UnityEngine;
 using NodeEditorFramework;
+using System;
 
 namespace NodeView
 {
@@ -46,6 +47,17 @@ namespace NodeView
             m_LogicCanvas.SetInteger(paramName, value);
             if (executeChangeImmed)
                 SetCameraSettingsFromGraph();
+        }
+
+        /// <summary>
+        /// Sets trigger (bool that reinitialises after graph evaluation).
+        /// </summary>
+        /// <param name="paramName">Name of the trigger.</param>
+        public void SetTrigger(string paramName)
+        {
+            m_LogicCanvas.SetBool(paramName, true);
+            SetCameraSettingsFromGraph();
+            m_LogicCanvas.SetBool(paramName, false);
         }
 
         /// <summary>

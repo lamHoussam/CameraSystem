@@ -232,7 +232,7 @@ namespace NodeEditorFramework
             
             string json = JsonUtility.ToJson(SerializableHashtable.FromHashtable(m_Parameters));
             string filePath = Path.Combine(Application.persistentDataPath, saveFileName);
-            Debug.LogWarning(json);
+            //Debug.LogWarning(json);
             File.WriteAllText(filePath, json);
         }
 

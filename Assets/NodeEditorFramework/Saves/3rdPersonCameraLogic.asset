@@ -1,5 +1,21 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8116866792719006072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 792d20a9a554e2b4cbc381704a422964, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_From: {fileID: 6079736932625090014}
+  m_To: {fileID: 2012782236785943926}
+  m_Conditions:
+  - {fileID: -4289410732376029945}
 --- !u!114 &-6173011803647813064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16,6 +32,38 @@ MonoBehaviour:
   m_To: {fileID: -1697884817048005210}
   m_Conditions:
   - {fileID: -2797666860419050299}
+--- !u!114 &-4289410732376029945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d89f9ba8939ec3f43b3cac2f47a137c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ParameterName: crouch
+  m_Value:
+    m_boolValue: 1
+    m_intValue: 0
+  m_NodeCanvas: {fileID: 11400000}
+--- !u!114 &-3878579202276426073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 792d20a9a554e2b4cbc381704a422964, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_From: {fileID: 6079736932625090014}
+  m_To: {fileID: 1114095739733712191}
+  m_Conditions: []
 --- !u!114 &-2797666860419050299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47,8 +95,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Rect:
     serializedVersion: 2
-    x: 472
-    y: 82
+    x: 654
+    y: 210
     width: 200
     height: 50
   m_InitialRect:
@@ -60,6 +108,40 @@ MonoBehaviour:
   m_Connections: []
   m_nodeColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_CameraSettings: {fileID: 11400000, guid: 3cad9251a071bce4f92f76d9c7788f44, type: 2}
+--- !u!114 &-739661333141668185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d89f9ba8939ec3f43b3cac2f47a137c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ParameterName: aim
+  m_Value:
+    m_boolValue: 0
+    m_intValue: 0
+  m_NodeCanvas: {fileID: 11400000}
+--- !u!114 &-305677776879059639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d89f9ba8939ec3f43b3cac2f47a137c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ParameterName: rightShoulder
+  m_Value:
+    m_boolValue: 1
+    m_intValue: 0
+  m_NodeCanvas: {fileID: 11400000}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,11 +160,13 @@ MonoBehaviour:
   - {fileID: 1114095739733712191}
   - {fileID: -1697884817048005210}
   - {fileID: 4815012047707499861}
+  - {fileID: 2012782236785943926}
   m_NodesConnections:
-  - {fileID: 4102336639633243185}
-  - {fileID: 8963403154143952609}
   - {fileID: -6173011803647813064}
   - {fileID: 1319372283463015833}
+  - {fileID: -8116866792719006072}
+  - {fileID: 4991874156498896732}
+  - {fileID: -3878579202276426073}
 --- !u!114 &1114095739733712191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,6 +211,33 @@ MonoBehaviour:
   m_To: {fileID: 4815012047707499861}
   m_Conditions:
   - {fileID: 3949146417877024208}
+--- !u!114 &2012782236785943926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 334a914409b65ac488a6510b323bd382, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Rect:
+    serializedVersion: 2
+    x: 351
+    y: 87.2
+    width: 200
+    height: 50
+  m_InitialRect:
+    serializedVersion: 2
+    x: 650
+    y: 359.2
+    width: 200
+    height: 50
+  m_Connections: []
+  m_nodeColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_CameraSettings: {fileID: 11400000, guid: 8f2afa845692ae04eb7dd83ebcef187e, type: 2}
 --- !u!114 &3949146417877024208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,8 +269,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_From: {fileID: 6079736932625090014}
   m_To: {fileID: 4853782070012452545}
-  m_Conditions:
-  - {fileID: 7999007685484013674}
+  m_Conditions: []
 --- !u!114 &4815012047707499861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,8 +311,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Rect:
     serializedVersion: 2
-    x: 273
-    y: 185
+    x: 419
+    y: 233
     width: 200
     height: 50
   m_InitialRect:
@@ -215,6 +325,22 @@ MonoBehaviour:
   - {fileID: -6173011803647813064}
   m_nodeColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_CameraSettings: {fileID: 11400000, guid: da37ad6457fa8c345a616c8e123d9fdf, type: 2}
+--- !u!114 &4991874156498896732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 792d20a9a554e2b4cbc381704a422964, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_From: {fileID: 6079736932625090014}
+  m_To: {fileID: 4853782070012452545}
+  m_Conditions:
+  - {fileID: -305677776879059639}
 --- !u!114 &6079736932625090014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,8 +366,9 @@ MonoBehaviour:
     width: 200
     height: 50
   m_Connections:
-  - {fileID: 4102336639633243185}
-  - {fileID: 8963403154143952609}
+  - {fileID: -8116866792719006072}
+  - {fileID: 4991874156498896732}
+  - {fileID: -3878579202276426073}
   m_nodeColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!114 &7999007685484013674
 MonoBehaviour:
