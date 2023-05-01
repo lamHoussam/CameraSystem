@@ -34,7 +34,9 @@ namespace NodeView
             m_originalPosition = transform.position;
 
             m_shakeAxisX = transform.right;
-            m_shakeAxisY = transform.up;
+            m_shakeAxisY = Vector3.up;
+
+            Debug.LogWarning("Original position : " + m_originalPosition);
         }
 
         public void ActivateShake() => ActivateShake(m_shakeIntensity, m_shakeTime);
@@ -52,9 +54,12 @@ namespace NodeView
             dt *= 20;
             float x = Mathf.PerlinNoise(dt, 0f) * 2f - 1f;
             float y = Mathf.PerlinNoise(0f, dt) * 2f - 1f;
+            //float y = 0;
+            Debug.LogWarning("Y : " + y);
 
             x *= m_shakeIntensity;
             y *= m_shakeIntensity;
+
 
             Vector3 targetPosition = m_originalPosition + x * m_shakeAxisX + y * m_shakeAxisY;
             transform.position = Vector3.Lerp(transform.position, targetPosition, m_shakeSmoothness);

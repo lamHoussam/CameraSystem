@@ -53,6 +53,9 @@ namespace NodeEditorFramework
 
         private Hashtable m_NodesDiscoveredHashtable;
 
+        private string ParamsFolderPath => Application.dataPath + Path.DirectorySeparatorChar + "NodeEditorFramework" +
+                Path.DirectorySeparatorChar + "_Params";
+
         #region Properties API
         public EntryNode Entry => NodeCount == 0 ? default : (EntryNode)m_Nodes[0];
         public int NodeCount => m_Nodes == null ? 0 : m_Nodes.Count;
@@ -108,14 +111,20 @@ namespace NodeEditorFramework
         /// <returns>if exists</returns>
         public bool ContainsParameter(string name) => m_Parameters.ContainsKey(name);
 
-
-        public Node EvaluateFrom(Node startingNode)
+        
+        public Node EvaluateFrom(Node startingNode, bool executeOnBranchAction = true)
         {
+            // First node won't be executed if it is a NodeEvent
             Node node = startingNode;
             Node next = node.GetNextNode();
             while (next != null)
             {
                 node = next;
+                if (executeOnBranchAction && node.GetType() == typeof(EventNode))
+                {
+                    EventNode evNode = node as EventNode;
+                    evNode.Execute();
+                }
                 next = next.GetNextNode();
             }
 
@@ -128,23 +137,22 @@ namespace NodeEditorFramework
         /// Evaluate conditions starting from Entry
         /// </summary>
         /// <returns>Last node such that path from Entry to node evaluates to true</returns>
-        public Node Evaluate() => EvaluateFrom(Entry);
+        public Node Evaluate(bool executeOnBranchAction = true) => EvaluateFrom(Entry, executeOnBranchAction);
 
 
         /// <summary>
         /// Evaluate conditions starting from Last evaluated node (default Entry)
         /// </summary>
         /// <returns>Last node such that path from Last evaluated node to result node evaluates to true</returns>
-        public Node EvaluateFromLastEvaluatedNode() => EvaluateFrom(LastEvaluatedNode);
+        public Node EvaluateFromLastEvaluatedNode(bool executeOnBranchAction = true) => EvaluateFrom(LastEvaluatedNode, executeOnBranchAction);
 
         private T FindNode<T>(Node node) where T : Node
         {
             m_NodesDiscoveredHashtable[node.GetInstanceID()] = true;
-            //Node next = node.GetNextNode();
 
             Node next = default;
 
-            for(int i = 0; i < node.ConnectionsCount; i++)
+            for (int i = 0; i < node.ConnectionsCount; i++)
             {
                 NodeConnection cnx = node.GetConnection(i);
                 //Debug.LogWarning("Node : " + cnx.To);
@@ -154,10 +162,10 @@ namespace NodeEditorFramework
                     next = cnx.To;
             }
 
-            //// Only consider paths from Entry
+            // Only consider paths from Entry
             if (next == default(Node))
             {
-                for(int i = 0; i < Entry.ConnectionsCount; i++)
+                for (int i = 0; i < Entry.ConnectionsCount; i++)
                 {
                     if (!Entry.GetConnection(i).EvaluateConditions())
                         continue;
@@ -229,18 +237,29 @@ namespace NodeEditorFramework
 
             if (m_Parameters == null)
                 return;
-            
+
             string json = JsonUtility.ToJson(SerializableHashtable.FromHashtable(m_Parameters));
-            string filePath = Path.Combine(Application.persistentDataPath, saveFileName);
-            //Debug.LogWarning(json);
+            string filePath = Path.Combine(ParamsFolderPath, saveFileName);
+
+
+            Debug.LogWarning(filePath);
+
+            string directoryPath = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
+
+
             File.WriteAllText(filePath, json);
+
+            Debug.LogWarning(json);
         }
 
         public void LoadCanvasParameterState()
         {
             string saveFileName = name + "_params.json";
 
-            string filePath = Path.Combine(Application.persistentDataPath, saveFileName);
+            //string filePath = Path.Combine(Application.persistentDataPath, saveFileName);
+            string filePath = Path.Combine(ParamsFolderPath, saveFileName);
 
 
             if (File.Exists(filePath))
@@ -266,7 +285,7 @@ namespace NodeEditorFramework
             string saveFileName = name + "_params.json";
             string filePath = Path.Combine(Application.persistentDataPath, saveFileName);
 
-            if (File.Exists(filePath)) 
+            if (File.Exists(filePath))
                 File.Delete(filePath);
         }
 
@@ -303,13 +322,13 @@ namespace NodeEditorFramework
         /// <param name="node">node to remove</param>
         public void RemoveNode(Node node)
         {
-            if(m_NodesConnections != null)
+            if (m_NodesConnections != null)
             {
                 int initCount = m_NodesConnections.Count;
 
                 List<NodeConnection> cnxsToRemove = new List<NodeConnection>();
 
-                for(int i = 0; i < initCount; i++)
+                for (int i = 0; i < initCount; i++)
                 {
                     if (m_NodesConnections[i].From == node || m_NodesConnections[i].To == node)
                     {
@@ -318,7 +337,7 @@ namespace NodeEditorFramework
                     }
                 }
 
-                for(int i = 0; i < cnxsToRemove.Count; i++)
+                for (int i = 0; i < cnxsToRemove.Count; i++)
                     m_NodesConnections.Remove(cnxsToRemove[i]);
             }
 
